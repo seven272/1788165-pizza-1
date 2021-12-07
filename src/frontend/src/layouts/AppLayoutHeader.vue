@@ -1,3 +1,4 @@
+/* eslint-disable */
 <template>
     <header class="header">
       <div class="header__logo">
