@@ -72,7 +72,7 @@
                 <p>Начинка:</p>
 
                 <ul class="ingredients__list">
-                  <li class="ingredients__item" v-for="({id, name, style}) in makeNewObjectIngredients()" :key="id">
+                  <li class="ingredients__item" v-for="({id, name, style}) in makeNewObjectIngredients" :key="id">
                     <span class="filling" :class = "`filling--${style}`">{{name}}</span>
 
                     <div class="counter counter--orange ingredients__counter">
@@ -85,20 +85,7 @@
                       </button>
                     </div>
                   </li>
-                  <li class="ingredients__item">
-                    <span class="filling filling--cheddar">{{changeName()}}</span>
-
-                    <div class="counter counter--orange ingredients__counter">
-                      <button type="button" class="counter__button counter__button--minus" disabled>
-                        <span class="visually-hidden">Меньше</span>
-                      </button>
-                      <input type="text" name="counter" class="counter__input" value="0">
-                      <button type="button" class="counter__button counter__button--plus">
-                        <span class="visually-hidden">Больше</span>
-                      </button>
-                    </div>
-                  </li>
-                  
+                 
                 </ul>
 
               </div>
@@ -144,7 +131,7 @@ export default {
     namePizza: "Мухоморы",
     newobj: pizza.ingredients,
   }),
-  methods: {
+  computed: {
     makeNewObjectIngredients() {
       let arrObjIngred = []
       pizza.ingredients.forEach(element => {
@@ -162,11 +149,6 @@ export default {
       return arrObjIngred
      
     },
-    
-    changeName() {
-      console.log("ggggggg")
-      return this.namePizza = "Паганки"
-    }
   }
 };
 
