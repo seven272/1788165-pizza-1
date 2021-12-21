@@ -60,7 +60,7 @@
           </div>
         </div>
 
-        <BuilderPizzaView />
+        <BuilderPizzaView v-bind:obj_pizza="objDatesPizza" />
       </div>
     </form>
   </main>
@@ -90,6 +90,10 @@ export default {
     objSauce: pizza.sauces,
     objDough: pizza.dough,
     objSize: pizza.sizes,
+    arrDatesPizza: [],
+    objDatesPizza: {
+      ingredientId: [],
+    },
   }),
   computed: {
     makeNewObjectIngredients() {
@@ -140,22 +144,25 @@ export default {
         pizza.sizes[i]["value"] = arrSizeValues[i];
         arrObjSizes.push(pizza.sizes[i]);
       }
-      console.log(arrObjSizes);
       return arrObjSizes;
     },
   },
   methods: {
     showNameIngred(data) {
+      this.objDatesPizza.ingredientId.push(data);
       console.log(data);
     },
     showNameSize(data) {
-      console.log(data);
+      this.objDatesPizza.size = data;
+      console.log(this.objDatesPizza);
     },
     showNameDough(data) {
-      console.log(data);
+      this.objDatesPizza.dough = data;
+      console.log(this.objDatesPizza);
     },
     showNameSauce(data) {
-      console.log(data);
+      this.objDatesPizza.sauce = data;
+      console.log(this.objDatesPizza);
     },
   },
 };
