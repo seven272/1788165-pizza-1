@@ -12,7 +12,7 @@
 
     <div class="content__constructor">
       <div
-        :class="`pizza pizza--foundation--${changeClassDough}-${classSauce}`"
+        :class="`pizza pizza--foundation--${classDough}-${classSauce}`"
         @click="multiplyChangeClass()"
       >
         <div class="pizza__wrapper">
@@ -49,29 +49,29 @@ export default {
   components: {
     BuilderPriceCounter,
   },
-  computed: {
-    changeClassDough() {
-      let a = "big";
-      if (this.obj_pizza.dough === "Толстое") {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        a = "big";
-      } else if (this.obj_pizza.dough === "Тонкое") {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        a = "small";
-      }
-      console.log(a);
-      return a;
-    },
-  },
+  // computed: {
+  //   changeClassDough() {
+  //     let a = "big";
+  //     if (this.obj_pizza.dough === "Толстое") {
+  //       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+  //       a = "big";
+  //     } else if (this.obj_pizza.dough === "Тонкое") {
+  //       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+  //       a = "small";
+  //     }
+  //     console.log(a);
+  //     return a;
+  //   },
+  // },
   methods: {
-    // changeClassDough() {
-    //   if (this.obj_pizza.dough === "Толстое") {
-    //     this.classDough = "big";
-    //   } else if (this.obj_pizza.dough === "Тонкое") {
-    //     this.classDough = "small";
-    //   }
-    //   return this.classDough;
-    // },
+    changeClassDough() {
+      if (this.obj_pizza.dough === "Толстое") {
+        this.classDough = "big";
+      } else if (this.obj_pizza.dough === "Тонкое") {
+        this.classDough = "small";
+      }
+      return this.classDough;
+    },
     changeClassSauce() {
       if (this.obj_pizza.sauce === "Томатный") {
         this.classSauce = "tomato";
@@ -152,7 +152,7 @@ export default {
     },
     multiplyChangeClass() {
       this.changeClassSauce();
-      // this.changeClassDough();
+      this.changeClassDough();
       this.changeClassIngredient();
     },
   },
