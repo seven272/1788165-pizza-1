@@ -2,7 +2,14 @@
   <main class="content">
     <form action="#" method="post">
       <div class="content__wrapper">
-        <h1 class="title title--big">Конструктор пиццы</h1>
+        <h1
+          class="title title--big"
+          @drop="onDrop($event, obj_pizza)"
+          @dragover.prevent
+          @dragenter.prevent
+        >
+          Конструктор пиццы
+        </h1>
         <div class="content__dough">
           <div class="sheet">
             <h2 class="title title--small sheet__title">Выберите тесто</h2>
@@ -11,7 +18,7 @@
                 v-for="dough in makeNewObjectDough"
                 :key="dough.id"
                 v-bind:dough_pizza="dough"
-                v-on:nameDoughPizza="showNameDough"
+                v-on:nameDoughPizza="getDatesDough"
               />
             </div>
           </div>
@@ -25,7 +32,7 @@
                 v-for="size in makeNewObjectSizes"
                 :key="size.id"
                 :size_pizza="size"
-                @nameSizePizza="showNameSize"
+                @nameSizePizza="getDatesSize"
               />
             </div>
           </div>
@@ -42,7 +49,7 @@
                   v-for="sauce in makeNewObjectSauces"
                   :key="sauce.id"
                   v-bind:sauce_pizza="sauce"
-                  @nameSaucePizza="showNameSauce"
+                  @nameSaucePizza="getDatesSauce"
                 />
               </div>
               <div class="ingredients__filling">
@@ -52,7 +59,11 @@
                     v-for="ingred in makeNewObjectIngredients"
                     :key="ingred.id"
                     v-bind:ingredient_pizza="ingred"
-                    v-on:nameInged="showNameIngred"
+                    v-on:nameInged="getNameIngred"
+                    v-on:deleteInged="getDeleteNameIngred"
+                    v-on:click="makeNewArrayIngredients"
+                    draggable="true"
+                    @dragstart="onStartDrag($event, ingred)"
                   />
                 </ul>
               </div>
@@ -60,7 +71,13 @@
           </div>
         </div>
 
-        <BuilderPizzaView v-bind:obj_pizza="objDatesPizza" />
+        <BuilderPizzaView
+          v-bind:obj_pizza="objDatesPizza"
+          v-bind:price_pizza="costPizza"
+          @drop="onDrop($event, obj_pizza)"
+          @dragover.prevent
+          @dragenter.prevent
+        />
       </div>
     </form>
   </main>
@@ -90,9 +107,22 @@ export default {
     objSauce: pizza.sauces,
     objDough: pizza.dough,
     objSize: pizza.sizes,
+    ingredientId: [],
+    ingredientIdDelete: [],
+    ingredientPrice: [],
+    ingredientPriceDelete: [],
     arrDatesPizza: [],
     objDatesPizza: {
-      ingredientId: [],
+      dough: "Толстое",
+      sauce: "Томатный",
+      sortArrIngedients: [],
+    },
+    costPizza: {
+      costDough: 300,
+      costSauce: 50,
+      multiplierSize: 1,
+      costIngredients: 0,
+      finalPrice: 0,
     },
   }),
   computed: {
@@ -114,9 +144,11 @@ export default {
         let objIngredients = {};
         objIngredients["id"] = element.id;
         objIngredients["name"] = element.name;
+        objIngredients["price"] = element.price;
         objIngredients["style"] = newVal[0];
         arrObjIngred.push(objIngredients);
       });
+      // console.log(arrObjIngred);
       return arrObjIngred;
     },
     makeNewObjectSauces() {
@@ -148,21 +180,98 @@ export default {
     },
   },
   methods: {
-    showNameIngred(data) {
-      this.objDatesPizza.ingredientId.push(data);
-      console.log(data);
+    getNameIngred(title, price) {
+      this.ingredientId.push(title);
+      this.ingredientPrice.push(price);
+      // console.log(this.ingredientPrice);
+      this.makeNewArrayIngredients();
+      this.countPriceIngredients();
+      this.calculatePricePizza();
     },
-    showNameSize(data) {
-      this.objDatesPizza.size = data;
-      console.log(this.objDatesPizza);
+    getDeleteNameIngred(title, price) {
+      this.ingredientIdDelete.push(title);
+      this.ingredientPriceDelete.push(price);
+      this.makeNewArrayIngredients();
+      this.countPriceIngredients();
+      this.calculatePricePizza();
     },
-    showNameDough(data) {
-      this.objDatesPizza.dough = data;
-      console.log(this.objDatesPizza);
+    //сравниваем два массива удаленных и добавленных ингридиентов и формируем новый массив
+    makeNewArrayIngredients() {
+      let arr1 = this.ingredientId;
+      let arr2 = this.ingredientIdDelete;
+      let newArr = arr1.map((elem) => {
+        for (let i = 0; i < arr2.length; i++) {
+          if (elem === arr2[i]) {
+            elem = "";
+            delete arr2[i];
+          }
+        }
+        return elem;
+      });
+      let filterArr = newArr
+        .filter((elem) => {
+          if (elem !== "") {
+            return true;
+          }
+        })
+        .sort();
+      this.ingredientId = filterArr;
+      this.objDatesPizza.sortArrIngedients = this.ingredientId;
+      return this.ingredientId;
     },
-    showNameSauce(data) {
-      this.objDatesPizza.sauce = data;
-      console.log(this.objDatesPizza);
+    countPriceIngredients() {
+      let sumPlusIngredients = this.ingredientPrice.reduce((sum, elem) => {
+        return sum + elem;
+      }, 0);
+      let sumMinusIngredients = this.ingredientPriceDelete.reduce(
+        (sum, elem) => {
+          return sum + elem;
+        },
+        0
+      );
+      let finishCostIngredients = sumPlusIngredients - sumMinusIngredients;
+      this.costPizza.costIngredients = finishCostIngredients;
+      // console.log(this.costPizza.costIngredients);
+      return this.costPizza.costIngredients;
+    },
+    getDatesSize(title, multiplier) {
+      this.objDatesPizza.size = title;
+      this.costPizza.multiplierSize = multiplier;
+      // console.log(this.costPizza.multiplierSize);
+      this.calculatePricePizza();
+    },
+    getDatesDough(title, price) {
+      this.objDatesPizza.dough = title;
+      this.costPizza.costDough = price;
+      this.calculatePricePizza();
+    },
+    getDatesSauce(title, price) {
+      this.objDatesPizza.sauce = title;
+      this.costPizza.costSauce = price;
+      this.calculatePricePizza();
+    },
+    calculatePricePizza() {
+      let price =
+        this.costPizza.multiplierSize *
+        (this.costPizza.costDough +
+          this.costPizza.costSauce +
+          this.costPizza.costIngredients);
+      this.costPizza.finalPrice = price;
+      console.log(this.costPizza.finalPrice);
+      return this.costPizza.finalPrice;
+    },
+    onStartDrag(evt, item) {
+      evt.dataTransfer.dropEffect = "move";
+      evt.dataTransfer.effectAllowed = "move";
+      evt.dataTransfer.setData("itemID", item.id);
+      // console.log(item.id);
+    },
+    onDrop(evt, list) {
+      const itemID = evt.dataTransfer.getData("itemID");
+      console.log(itemID);
+      console.log(list);
+      // const item = this.items.find((item) => item.id == itemID);
+      // item.list = list;
     },
   },
 };

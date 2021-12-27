@@ -1,4 +1,4 @@
-/* eslint-disable vue/no-side-effects-in-computed-properties */
+/* eslint-disable no-constant-condition */
 <template>
   <div class="content__pizza">
     <label class="input">
@@ -7,6 +7,7 @@
         type="text"
         name="pizza_name"
         placeholder="Введите название пиццы"
+        v-model="titlePizza"
       />
     </label>
 
@@ -16,9 +17,6 @@
         @click="multiplyChangeClass()"
       >
         <div class="pizza__wrapper">
-          <!-- <div class="pizza__filling pizza__filling--ananas"></div>
-          <div class="pizza__filling pizza__filling--bacon"></div>
-          <div class="pizza__filling pizza__filling--cheddar"></div> -->
           <div
             :class="`pizza__filling ${element}`"
             v-for="(element, index) in classIngredients"
@@ -27,16 +25,24 @@
         </div>
       </div>
     </div>
-    <BuilderPriceCounter />
+    <div class="content__result">
+      <p>Итого: {{ price_pizza.finalPrice }} ₽</p>
+      <button ref="buttonCook" type="button" class="button" disabled>
+        Готовьте!
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
-import BuilderPriceCounter from "./BuilderPriceCounter.vue";
 export default {
   name: "BuilderPizzaView",
   props: {
     obj_pizza: {
+      type: Object,
+      default: () => {},
+    },
+    price_pizza: {
       type: Object,
       default: () => {},
     },
@@ -45,43 +51,25 @@ export default {
     classDough: "big",
     classSauce: "tomato",
     classIngredients: [],
+    titlePizza: "",
   }),
-  components: {
-    BuilderPriceCounter,
-  },
-  // computed: {
-  //   changeClassDough() {
-  //     let a = "big";
-  //     if (this.obj_pizza.dough === "Толстое") {
-  //       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-  //       a = "big";
-  //     } else if (this.obj_pizza.dough === "Тонкое") {
-  //       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-  //       a = "small";
-  //     }
-  //     console.log(a);
-  //     return a;
-  //   },
-  // },
-  methods: {
-    changeClassDough() {
+  components: {},
+  watch: {
+    "obj_pizza.dough": function () {
       if (this.obj_pizza.dough === "Толстое") {
         this.classDough = "big";
       } else if (this.obj_pizza.dough === "Тонкое") {
         this.classDough = "small";
       }
-      return this.classDough;
     },
-    changeClassSauce() {
+    "obj_pizza.sauce": function () {
       if (this.obj_pizza.sauce === "Томатный") {
         this.classSauce = "tomato";
       } else if (this.obj_pizza.sauce === "Сливочный") {
         this.classSauce = "creamy";
       }
-      console.log(this.classSauce);
-      return this.classSauce;
     },
-    changeClassIngredient() {
+    "obj_pizza.sortArrIngedients": function () {
       const dictionaryIngredients = {
         Грибы: "pizza__filling--mushrooms",
         Ананас: "pizza__filling--ananas",
@@ -99,61 +87,67 @@ export default {
         Лосось: "pizza__filling--salmon",
         Томаты: "pizza__filling--tomatoes",
       };
-      for (let i = 0; i < this.obj_pizza.ingredientId.length; i++) {
-        switch (this.obj_pizza.ingredientId[i]) {
-          case "Грибы":
-            this.classIngredients.push(dictionaryIngredients.Грибы);
-            break;
-          case "Ананас":
-            this.classIngredients.push(dictionaryIngredients.Ананас);
-            break;
-          case "Бекон":
-            this.classIngredients.push(dictionaryIngredients.Бекон);
-            break;
-          case "Блю чиз":
-            this.classIngredients.push(dictionaryIngredients["Блю чиз"]);
-            break;
-          case "Чеддер":
-            this.classIngredients.push(dictionaryIngredients.Чеддер);
-            break;
-          case "Чили":
-            this.classIngredients.push(dictionaryIngredients.Чили);
-            break;
-          case "Ветчина":
-            this.classIngredients.push(dictionaryIngredients.Ветчина);
-            break;
-          case "Халапеньо":
-            this.classIngredients.push(dictionaryIngredients.Халапеньо);
-            break;
-          case "Моцарелла":
-            this.classIngredients.push(dictionaryIngredients.Моцарелла);
-            break;
-          case "Маслины":
-            this.classIngredients.push(dictionaryIngredients.Маслины);
-            break;
-          case "Лук":
-            this.classIngredients.push(dictionaryIngredients.Лук);
-            break;
-          case "Пармезан":
-            this.classIngredients.push(dictionaryIngredients.Пармезан);
-            break;
-          case "Салями":
-            this.classIngredients.push(dictionaryIngredients.Салями);
-            break;
-          case "Лосось":
-            this.classIngredients.push(dictionaryIngredients.Лосось);
-            break;
-          case "Томаты":
-            this.classIngredients.push(dictionaryIngredients.Томаты);
-            break;
+      let mapArr = this.obj_pizza.sortArrIngedients.map((elem) => {
+        if (elem === "Грибы") {
+          return dictionaryIngredients.Грибы;
+        } else if (elem === "Ананас") {
+          return dictionaryIngredients.Ананас;
+        } else if (elem === "Бекон") {
+          return dictionaryIngredients.Бекон;
+        } else if (elem === "Блю чиз") {
+          return dictionaryIngredients["Блю чиз"];
+        } else if (elem === "Чеддер") {
+          return dictionaryIngredients.Чеддер;
+        } else if (elem === "Чили") {
+          return dictionaryIngredients.Чили;
+        } else if (elem === "Ветчина") {
+          return dictionaryIngredients.Ветчина;
+        } else if (elem === "Халапеньо") {
+          return dictionaryIngredients.Халапеньо;
+        } else if (elem === "Моцарелла") {
+          return dictionaryIngredients.Моцарелла;
+        } else if (elem === "Маслины") {
+          return dictionaryIngredients.Маслины;
+        } else if (elem === "Лук") {
+          return dictionaryIngredients.Лук;
+        } else if (elem === "Пармезан") {
+          return dictionaryIngredients.Пармезан;
+        } else if (elem === "Салями") {
+          return dictionaryIngredients.Салями;
+        } else if (elem === "Лосось") {
+          return dictionaryIngredients.Лосось;
+        } else if (elem === "Томаты") {
+          return dictionaryIngredients.Томаты;
+        }
+      });
+      let newArr = [];
+      for (let i = 0; i < mapArr.length; i++) {
+        if (mapArr[i] === mapArr[i + 2]) {
+          newArr.push(`${mapArr[i]} pizza__filling--third`);
+        } else if (mapArr[i] === mapArr[i + 1]) {
+          newArr.push(`${mapArr[i]} pizza__filling--second`);
+        } else {
+          newArr.push(mapArr[i]);
         }
       }
-      console.log(this.classIngredients);
+      this.classIngredients = newArr;
     },
-    multiplyChangeClass() {
-      this.changeClassSauce();
-      this.changeClassDough();
-      this.changeClassIngredient();
+
+    classIngredients: function () {
+      if (this.classIngredients.length > 0 && this.titlePizza !== "") {
+        console.log(this.titlePizza);
+        this.$refs.buttonCook.disabled = false;
+      } else {
+        this.$refs.buttonCook.disabled = true;
+      }
+    },
+
+    titlePizza: function () {
+      if (this.titlePizza !== "" && this.classIngredients.length > 0) {
+        this.$refs.buttonCook.disabled = false;
+      } else {
+        this.$refs.buttonCook.disabled = true;
+      }
     },
   },
 };
