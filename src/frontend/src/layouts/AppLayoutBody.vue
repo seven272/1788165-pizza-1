@@ -2,14 +2,7 @@
   <main class="content">
     <form action="#" method="post">
       <div class="content__wrapper">
-        <h1
-          class="title title--big"
-          @drop="onDrop($event, 1)"
-          @dragover.prevent
-          @dragenter.prevent
-        >
-          Конструктор пиццы
-        </h1>
+        <h1 class="title title--big">Конструктор пиццы</h1>
         <div class="content__dough">
           <div class="sheet">
             <h2 class="title title--small sheet__title">Выберите тесто</h2>
@@ -63,21 +56,19 @@
                     v-on:deleteInged="getDeleteNameIngred"
                     v-on:click="makeNewArrayIngredients"
                     draggable="true"
-                    @dragstart="onStartDrag($event, ingred)"
+                    @dragstart="onStartDrag($event)"
                   />
                 </ul>
               </div>
             </div>
           </div>
         </div>
-
-        <BuilderPizzaView
-          v-bind:obj_pizza="objDatesPizza"
-          v-bind:price_pizza="costPizza"
-          @drop.native="onDrop($event, objSize)"
-          @dragover.prevent
-          @dragenter.prevent
-        />
+        <div @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
+          <BuilderPizzaView
+            v-bind:obj_pizza="objDatesPizza"
+            v-bind:price_pizza="costPizza"
+          />
+        </div>
       </div>
     </form>
   </main>
@@ -92,7 +83,6 @@ import BuilderSizeSelector from "../modules/builder/components/BuilderSizeSelect
 import BuilderPizzaView from "../modules/builder/components/BuilderPizzaView.vue";
 import BuilderIngredientsSelector from "../modules/builder/components/BuilderIngredientsSelector.vue";
 import BuilderSauceSelector from "../modules/builder/components/BuilderSauceSelector.vue";
-// import AppDrag from "../common/components.AppDrag.vue";
 export default {
   name: "AppLayoutBody",
   components: {
@@ -150,7 +140,6 @@ export default {
         objIngredients["style"] = newVal[0];
         arrObjIngred.push(objIngredients);
       });
-      // console.log(arrObjIngred);
       return arrObjIngred;
     },
     makeNewObjectSauces() {
@@ -233,13 +222,11 @@ export default {
       );
       let finishCostIngredients = sumPlusIngredients - sumMinusIngredients;
       this.costPizza.costIngredients = finishCostIngredients;
-      // console.log(this.costPizza.costIngredients);
       return this.costPizza.costIngredients;
     },
     getDatesSize(title, multiplier) {
       this.objDatesPizza.size = title;
       this.costPizza.multiplierSize = multiplier;
-      // console.log(this.costPizza.multiplierSize);
       this.calculatePricePizza();
     },
     getDatesDough(title, price) {
@@ -259,25 +246,19 @@ export default {
           this.costPizza.costSauce +
           this.costPizza.costIngredients);
       this.costPizza.finalPrice = price;
-      console.log(this.costPizza.finalPrice);
       return this.costPizza.finalPrice;
     },
-    onStartDrag(evt, item) {
-      evt.dataTransfer.dropEffect = "move";
-      evt.dataTransfer.effectAllowed = "move";
-      evt.dataTransfer.setData("itemID", item.id.toString());
-      // let bbb = evt.dataTransfer.setData("ingredID", ingred.id);
-      // console.log(evt);
-    },
-    // eslint-disable-next-line no-unused-vars
-    onDrop(evt, list) {
-      const ingredID = evt.dataTransfer.getData("itemID");
-      console.log(ingredID);
-      // console.log(list);
-      // const item = this.makeNewObjectIngredients.find((item) => item.id == 3);
-      // console.log(item);
-      // item.list = list;
-      // console.log(list);
+    onDrop(evt) {
+      const ingredient = evt.dataTransfer.getData("itemObj");
+      //преобразуем строку обратно в обьект
+      const objIngredient = JSON.parse(ingredient);
+      const ingredientName = objIngredient.name;
+      const ingredientCost = objIngredient.price;
+      this.ingredientPrice.push(ingredientCost);
+      this.ingredientId.push(ingredientName);
+      this.makeNewArrayIngredients();
+      this.countPriceIngredients();
+      this.calculatePricePizza();
     },
   },
 };

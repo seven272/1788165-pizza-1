@@ -1,5 +1,9 @@
 <template>
-  <li class="ingredients__item">
+  <li
+    class="ingredients__item"
+    draggable="true"
+    @dragstart="onDrag($event, ingredient_pizza)"
+  >
     <span class="filling" :class="`filling--${ingredient_pizza.style}`">{{
       ingredient_pizza.name
     }}</span>
@@ -42,6 +46,7 @@
 <script>
 // Импортируем JSON данные и статусы для карточек ингридиентов.
 import pizza from "../../../static/pizza.json";
+// import EventBus from "../../../event-bus.js";
 export default {
   name: "BuilderIngredientsSelector",
   data: () => ({
@@ -91,6 +96,14 @@ export default {
         this.$refs.buttonPlus.disabled = false;
       }
       this.inputValue = this.arrayQuantityIngredients.length;
+    },
+    onDrag(evt, ingredient) {
+      evt.dataTransfer.dropEffect = "move";
+      evt.dataTransfer.effectAllowed = "move";
+      //преобразуем обьект в строку
+      const strIngredient = JSON.stringify(ingredient);
+      evt.dataTransfer.setData("itemObj", strIngredient);
+      this.onClickAddIngredient();
     },
   },
 };
