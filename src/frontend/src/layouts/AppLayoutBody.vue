@@ -4,7 +4,7 @@
       <div class="content__wrapper">
         <h1
           class="title title--big"
-          @drop="onDrop($event, obj_pizza)"
+          @drop="onDrop($event, 1)"
           @dragover.prevent
           @dragenter.prevent
         >
@@ -74,7 +74,7 @@
         <BuilderPizzaView
           v-bind:obj_pizza="objDatesPizza"
           v-bind:price_pizza="costPizza"
-          @drop="onDrop($event, obj_pizza)"
+          @drop.native="onDrop($event, objSize)"
           @dragover.prevent
           @dragenter.prevent
         />
@@ -92,6 +92,7 @@ import BuilderSizeSelector from "../modules/builder/components/BuilderSizeSelect
 import BuilderPizzaView from "../modules/builder/components/BuilderPizzaView.vue";
 import BuilderIngredientsSelector from "../modules/builder/components/BuilderIngredientsSelector.vue";
 import BuilderSauceSelector from "../modules/builder/components/BuilderSauceSelector.vue";
+// import AppDrag from "../common/components.AppDrag.vue";
 export default {
   name: "AppLayoutBody",
   components: {
@@ -100,10 +101,11 @@ export default {
     BuilderPizzaView,
     BuilderIngredientsSelector,
     BuilderSauceSelector,
+    // AppDrag,
   },
   props: {},
   data: () => ({
-    newobj: pizza.ingredients,
+    newobj: pizza.ingredients[0].name,
     objSauce: pizza.sauces,
     objDough: pizza.dough,
     objSize: pizza.sizes,
@@ -263,15 +265,19 @@ export default {
     onStartDrag(evt, item) {
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
-      evt.dataTransfer.setData("itemID", item.id);
-      // console.log(item.id);
+      evt.dataTransfer.setData("itemID", item.id.toString());
+      // let bbb = evt.dataTransfer.setData("ingredID", ingred.id);
+      // console.log(evt);
     },
+    // eslint-disable-next-line no-unused-vars
     onDrop(evt, list) {
-      const itemID = evt.dataTransfer.getData("itemID");
-      console.log(itemID);
-      console.log(list);
-      // const item = this.items.find((item) => item.id == itemID);
+      const ingredID = evt.dataTransfer.getData("itemID");
+      console.log(ingredID);
+      // console.log(list);
+      // const item = this.makeNewObjectIngredients.find((item) => item.id == 3);
+      // console.log(item);
       // item.list = list;
+      // console.log(list);
     },
   },
 };
