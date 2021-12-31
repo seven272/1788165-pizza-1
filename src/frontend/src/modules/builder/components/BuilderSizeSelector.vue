@@ -1,13 +1,13 @@
 <template>
-  <label :class="`diameter__input diameter__input--${size_pizza.value}`">
+  <label :class="`diameter__input diameter__input--${sizePizza.value}`">
     <input
       type="radio"
       name="diameter"
-      :value="`${size_pizza.value}`"
+      :value="`${sizePizza.value}`"
       class="visually-hidden"
       @click="sendNameSize"
     />
-    <span>{{ size_pizza.name }}</span>
+    <span>{{ sizePizza.name }}</span>
   </label>
 </template>
 
@@ -15,7 +15,7 @@
 export default {
   name: "BuilderSizeSelector",
   props: {
-    size_pizza: {
+    sizePizza: {
       type: Object,
       default: () => {},
     },
@@ -24,8 +24,8 @@ export default {
     sendNameSize() {
       this.$emit(
         "nameSizePizza",
-        this.size_pizza.name,
-        this.size_pizza.multiplier
+        this.sizePizza.name,
+        this.sizePizza.multiplier
       );
     },
   },

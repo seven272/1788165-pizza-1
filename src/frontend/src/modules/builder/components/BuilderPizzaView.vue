@@ -12,10 +12,7 @@
     </label>
 
     <div class="content__constructor">
-      <div
-        :class="`pizza pizza--foundation--${classDough}-${classSauce}`"
-        @click="multiplyChangeClass()"
-      >
+      <div :class="`pizza pizza--foundation--${classDough}-${classSauce}`">
         <div class="pizza__wrapper">
           <div
             :class="`pizza__filling ${element}`"
@@ -26,7 +23,7 @@
       </div>
     </div>
     <div class="content__result">
-      <p>Итого: {{ price_pizza.finalPrice }} ₽</p>
+      <p>Итого: {{ finalPricePizza }} ₽</p>
       <button ref="buttonCook" type="button" class="button" disabled>
         Готовьте!
       </button>
@@ -38,13 +35,18 @@
 export default {
   name: "BuilderPizzaView",
   props: {
-    obj_pizza: {
+    facePizza: {
       type: Object,
       default: () => {},
     },
-    price_pizza: {
+    pricePizza: {
       type: Object,
       default: () => {},
+    },
+    finalPricePizza: {
+      type: Number,
+      required: false,
+      default: 0,
     },
   },
   data: () => ({
@@ -55,21 +57,21 @@ export default {
   }),
   components: {},
   watch: {
-    "obj_pizza.dough": function () {
-      if (this.obj_pizza.dough === "Толстое") {
+    "facePizza.dough": function () {
+      if (this.facePizza.dough === "Толстое") {
         this.classDough = "big";
-      } else if (this.obj_pizza.dough === "Тонкое") {
+      } else if (this.facePizza.dough === "Тонкое") {
         this.classDough = "small";
       }
     },
-    "obj_pizza.sauce": function () {
-      if (this.obj_pizza.sauce === "Томатный") {
+    "facePizza.sauce": function () {
+      if (this.facePizza.sauce === "Томатный") {
         this.classSauce = "tomato";
-      } else if (this.obj_pizza.sauce === "Сливочный") {
+      } else if (this.facePizza.sauce === "Сливочный") {
         this.classSauce = "creamy";
       }
     },
-    "obj_pizza.sortArrIngedients": function () {
+    "facePizza.sortArrIngedients": function () {
       const dictionaryIngredients = {
         Грибы: "pizza__filling--mushrooms",
         Ананас: "pizza__filling--ananas",
@@ -87,7 +89,7 @@ export default {
         Лосось: "pizza__filling--salmon",
         Томаты: "pizza__filling--tomatoes",
       };
-      let mapArr = this.obj_pizza.sortArrIngedients.map((elem) => {
+      let mapArr = this.facePizza.sortArrIngedients.map((elem) => {
         if (elem === "Грибы") {
           return dictionaryIngredients.Грибы;
         } else if (elem === "Ананас") {

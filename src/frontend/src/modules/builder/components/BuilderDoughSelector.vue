@@ -1,15 +1,15 @@
 <template>
-  <label v-bind:class="`dough__input dough__input--${dough_pizza.value}`">
+  <label v-bind:class="`dough__input dough__input--${doughPizza.value}`">
     <input
       type="radio"
       name="dought"
-      :value="`${dough_pizza.value}`"
+      :value="`${doughPizza.value}`"
       class="visually-hidden"
       checked
       @click="sendNameDough"
     />
-    <b>{{ dough_pizza.name }}</b>
-    <span>{{ dough_pizza.description }}</span>
+    <b>{{ doughPizza.name }}</b>
+    <span>{{ doughPizza.description }}</span>
   </label>
 </template>
 
@@ -17,18 +17,14 @@
 export default {
   name: "BuilderDoughSelector",
   props: {
-    dough_pizza: {
+    doughPizza: {
       type: Object,
       default: () => {},
     },
   },
   methods: {
     sendNameDough() {
-      this.$emit(
-        "nameDoughPizza",
-        this.dough_pizza.name,
-        this.dough_pizza.price
-      );
+      this.$emit("nameDoughPizza", this.doughPizza.name, this.doughPizza.price);
     },
   },
 };

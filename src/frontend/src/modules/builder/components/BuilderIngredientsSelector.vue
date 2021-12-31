@@ -13,11 +13,8 @@
         ref="buttonMinus"
         type="button"
         class="counter__button counter__button--minus"
-        disabled
-        v-on:click="
-          onClickDeleteIngredient();
-          deleteNameIngred();
-        "
+        :disabled="isDisabledButtonMinus"
+        @click="multiplyMehtodsDeleteIngredient()"
       >
         <span class="visually-hidden">Меньше</span>
       </button>
@@ -32,10 +29,8 @@
         ref="buttonPlus"
         type="button"
         class="counter__button counter__button--plus"
-        v-on:click="
-          onClickAddIngredient();
-          sendNameIngred();
-        "
+        :disabled="isDisabledButtonPlus"
+        @click="multiplyMehtodsAddIngredient()"
       >
         <span class="visually-hidden">Больше</span>
       </button>
@@ -46,7 +41,6 @@
 <script>
 // Импортируем JSON данные и статусы для карточек ингридиентов.
 import pizza from "../../../static/pizza.json";
-// import EventBus from "../../../event-bus.js";
 export default {
   name: "BuilderIngredientsSelector",
   data: () => ({
@@ -77,33 +71,57 @@ export default {
     },
     onClickAddIngredient() {
       this.arrayQuantityIngredients.push(this.ingredient_pizza.name);
-      if (this.arrayQuantityIngredients.length >= 3) {
-        this.$refs.buttonPlus.disabled = true;
-      } else if (this.arrayQuantityIngredients.length < 3) {
-        this.$refs.buttonPlus.disabled = false;
-      }
-      if (this.arrayQuantityIngredients.length > 0) {
-        this.$refs.buttonMinus.disabled = false;
-      }
       this.inputValue = this.arrayQuantityIngredients.length;
     },
     onClickDeleteIngredient() {
       this.arrayQuantityIngredients.pop();
-      if (this.arrayQuantityIngredients.length === 0) {
-        this.$refs.buttonMinus.disabled = true;
-        this.$refs.buttonPlus.disabled = false;
-      } else if (this.arrayQuantityIngredients.length < 3) {
-        this.$refs.buttonPlus.disabled = false;
-      }
       this.inputValue = this.arrayQuantityIngredients.length;
     },
+    multiplyMehtodsDeleteIngredient() {
+      this.deleteNameIngred();
+      this.onClickDeleteIngredient();
+    },
+    multiplyMehtodsAddIngredient() {
+      this.onClickAddIngredient();
+      this.sendNameIngred();
+    },
     onDrag(evt, ingredient) {
-      evt.dataTransfer.dropEffect = "move";
-      evt.dataTransfer.effectAllowed = "move";
       //преобразуем обьект в строку
       const strIngredient = JSON.stringify(ingredient);
       evt.dataTransfer.setData("itemObj", strIngredient);
       this.onClickAddIngredient();
+      //отменяем действие по умолчанию если больше 3-х ингридиентов, чтобы запретить перетаскивание
+      if (this.arrayQuantityIngredients.length > 3) {
+        evt.preventDefault();
+        this.arrayQuantityIngredients.length = 3;
+        this.inputValue = 3;
+      } else {
+        evt.dataTransfer.dropEffect = "move";
+        evt.dataTransfer.effectAllowed = "move";
+      }
+    },
+  },
+  computed: {
+    isDisabledButtonPlus() {
+      let bulianValueBtnPlus = false;
+      if (this.arrayQuantityIngredients.length >= 3) {
+        bulianValueBtnPlus = true;
+      } else if (this.arrayQuantityIngredients.length < 3) {
+        bulianValueBtnPlus = false;
+      }
+      return bulianValueBtnPlus;
+    },
+    isDisabledButtonMinus() {
+      let bulianValueBtnMinus = true;
+      if (this.arrayQuantityIngredients.length === 0) {
+        bulianValueBtnMinus = true;
+      } else if (
+        this.arrayQuantityIngredients.length > 0 ||
+        this.arrayQuantityIngredients.length < 3
+      ) {
+        bulianValueBtnMinus = false;
+      }
+      return bulianValueBtnMinus;
     },
   },
 };

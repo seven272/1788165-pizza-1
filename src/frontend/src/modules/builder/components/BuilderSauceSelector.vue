@@ -1,7 +1,7 @@
 <template>
   <label class="radio ingredients__input" @click="sendNameSauce">
-    <input type="radio" name="sauce" :value="`${sauce_pizza.value}`" checked />
-    <span>{{ sauce_pizza.name }}</span>
+    <input type="radio" name="sauce" :value="`${saucePizza.value}`" checked />
+    <span>{{ saucePizza.name }}</span>
   </label>
 </template>
 <script>
@@ -9,18 +9,14 @@ export default {
   name: "BuilderSauceSelector",
   data: () => ({}),
   props: {
-    sauce_pizza: {
+    saucePizza: {
       type: Object,
       default: () => {},
     },
   },
   methods: {
     sendNameSauce() {
-      this.$emit(
-        "nameSaucePizza",
-        this.sauce_pizza.name,
-        this.sauce_pizza.price
-      );
+      this.$emit("nameSaucePizza", this.saucePizza.name, this.saucePizza.price);
     },
   },
 };
