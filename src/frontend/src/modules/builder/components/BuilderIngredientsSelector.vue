@@ -1,7 +1,7 @@
 <template>
   <li
     class="ingredients__item"
-    draggable="true"
+    :draggable="isDisabledDraggble"
     @dragstart="onDrag($event, ingredient_pizza)"
   >
     <span class="filling" :class="`filling--${ingredient_pizza.style}`">{{
@@ -45,8 +45,8 @@ export default {
   name: "BuilderIngredientsSelector",
   data: () => ({
     newobj: pizza.ingredients,
-    arrayQuantityIngredients: [],
     inputValue: 0,
+    counterIngredients: 0,
   }),
   props: {
     ingredient_pizza: {
@@ -70,12 +70,12 @@ export default {
       );
     },
     onClickAddIngredient() {
-      this.arrayQuantityIngredients.push(this.ingredient_pizza.name);
-      this.inputValue = this.arrayQuantityIngredients.length;
+      this.counterIngredients++;
+      this.inputValue = this.counterIngredients;
     },
     onClickDeleteIngredient() {
-      this.arrayQuantityIngredients.pop();
-      this.inputValue = this.arrayQuantityIngredients.length;
+      this.counterIngredients--;
+      this.inputValue = this.counterIngredients;
     },
     multiplyMehtodsDeleteIngredient() {
       this.deleteNameIngred();
@@ -86,42 +86,41 @@ export default {
       this.sendNameIngred();
     },
     onDrag(evt, ingredient) {
+      evt.dataTransfer.dropEffect = "move";
+      evt.dataTransfer.effectAllowed = "move";
       //преобразуем обьект в строку
       const strIngredient = JSON.stringify(ingredient);
       evt.dataTransfer.setData("itemObj", strIngredient);
       this.onClickAddIngredient();
-      //отменяем действие по умолчанию если больше 3-х ингридиентов, чтобы запретить перетаскивание
-      if (this.arrayQuantityIngredients.length > 3) {
-        evt.preventDefault();
-        this.arrayQuantityIngredients.length = 3;
-        this.inputValue = 3;
-      } else {
-        evt.dataTransfer.dropEffect = "move";
-        evt.dataTransfer.effectAllowed = "move";
-      }
     },
   },
   computed: {
     isDisabledButtonPlus() {
       let bulianValueBtnPlus = false;
-      if (this.arrayQuantityIngredients.length >= 3) {
+      if (this.counterIngredients >= 3) {
         bulianValueBtnPlus = true;
-      } else if (this.arrayQuantityIngredients.length < 3) {
+      } else if (this.counterIngredients < 3) {
         bulianValueBtnPlus = false;
       }
       return bulianValueBtnPlus;
     },
     isDisabledButtonMinus() {
       let bulianValueBtnMinus = true;
-      if (this.arrayQuantityIngredients.length === 0) {
+      if (this.counterIngredients === 0) {
         bulianValueBtnMinus = true;
-      } else if (
-        this.arrayQuantityIngredients.length > 0 ||
-        this.arrayQuantityIngredients.length < 3
-      ) {
+      } else if (this.counterIngredients > 0 || this.counterIngredients < 3) {
         bulianValueBtnMinus = false;
       }
       return bulianValueBtnMinus;
+    },
+    isDisabledDraggble() {
+      let bulianValueDraggble = true;
+      if (this.counterIngredients >= 3) {
+        bulianValueDraggble = false;
+      } else {
+        bulianValueDraggble = true;
+      }
+      return bulianValueDraggble;
     },
   },
 };

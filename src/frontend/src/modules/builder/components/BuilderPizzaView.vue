@@ -12,11 +12,13 @@
     </label>
 
     <div class="content__constructor">
-      <div :class="`pizza pizza--foundation--${classDough}-${classSauce}`">
+      <div
+        :class="`pizza pizza--foundation--${getClassDough}-${getClassSauce}`"
+      >
         <div class="pizza__wrapper">
           <div
             :class="`pizza__filling ${element}`"
-            v-for="(element, index) in classIngredients"
+            v-for="(element, index) in getClassIngredients"
             v-bind:key="index"
           ></div>
         </div>
@@ -24,7 +26,12 @@
     </div>
     <div class="content__result">
       <p>Итого: {{ finalPricePizza }} ₽</p>
-      <button ref="buttonCook" type="button" class="button" disabled>
+      <button
+        ref="buttonCook"
+        type="button"
+        class="button"
+        :disabled="isDisabledButtonCook"
+      >
         Готовьте!
       </button>
     </div>
@@ -50,28 +57,11 @@ export default {
     },
   },
   data: () => ({
-    classDough: "big",
-    classSauce: "tomato",
-    classIngredients: [],
     titlePizza: "",
   }),
   components: {},
-  watch: {
-    "facePizza.dough": function () {
-      if (this.facePizza.dough === "Толстое") {
-        this.classDough = "big";
-      } else if (this.facePizza.dough === "Тонкое") {
-        this.classDough = "small";
-      }
-    },
-    "facePizza.sauce": function () {
-      if (this.facePizza.sauce === "Томатный") {
-        this.classSauce = "tomato";
-      } else if (this.facePizza.sauce === "Сливочный") {
-        this.classSauce = "creamy";
-      }
-    },
-    "facePizza.sortArrIngedients": function () {
+  computed: {
+    getClassIngredients() {
       const dictionaryIngredients = {
         Грибы: "pizza__filling--mushrooms",
         Ананас: "pizza__filling--ananas",
@@ -122,34 +112,44 @@ export default {
           return dictionaryIngredients.Томаты;
         }
       });
-      let newArr = [];
+      let newArrIngredients = [];
       for (let i = 0; i < mapArr.length; i++) {
         if (mapArr[i] === mapArr[i + 2]) {
-          newArr.push(`${mapArr[i]} pizza__filling--third`);
+          newArrIngredients.push(`${mapArr[i]} pizza__filling--third`);
         } else if (mapArr[i] === mapArr[i + 1]) {
-          newArr.push(`${mapArr[i]} pizza__filling--second`);
+          newArrIngredients.push(`${mapArr[i]} pizza__filling--second`);
         } else {
-          newArr.push(mapArr[i]);
+          newArrIngredients.push(mapArr[i]);
         }
       }
-      this.classIngredients = newArr;
+      return newArrIngredients;
     },
-
-    classIngredients: function () {
-      if (this.classIngredients.length > 0 && this.titlePizza !== "") {
-        console.log(this.titlePizza);
-        this.$refs.buttonCook.disabled = false;
-      } else {
-        this.$refs.buttonCook.disabled = true;
+    getClassDough() {
+      let classDough = "";
+      if (this.facePizza.dough === "Толстое") {
+        classDough = "big";
+      } else if (this.facePizza.dough === "Тонкое") {
+        classDough = "small";
       }
+      return classDough;
     },
-
-    titlePizza: function () {
-      if (this.titlePizza !== "" && this.classIngredients.length > 0) {
-        this.$refs.buttonCook.disabled = false;
-      } else {
-        this.$refs.buttonCook.disabled = true;
+    getClassSauce() {
+      let classSauce = "";
+      if (this.facePizza.sauce === "Томатный") {
+        classSauce = "tomato";
+      } else if (this.facePizza.sauce === "Сливочный") {
+        classSauce = "creamy";
       }
+      return classSauce;
+    },
+    isDisabledButtonCook() {
+      let bulianValueBtnCook = true;
+      if (this.getClassIngredients.length > 0 && this.titlePizza !== "") {
+        bulianValueBtnCook = false;
+      } else {
+        bulianValueBtnCook = true;
+      }
+      return bulianValueBtnCook;
     },
   },
 };

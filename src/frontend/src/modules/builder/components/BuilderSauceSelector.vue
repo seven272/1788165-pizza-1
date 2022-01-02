@@ -16,7 +16,7 @@ export default {
   },
   methods: {
     sendNameSauce() {
-      this.$emit("nameSaucePizza", this.saucePizza.name, this.saucePizza.price);
+      this.$emit("nameSaucePizza", this.saucePizza);
     },
   },
 };

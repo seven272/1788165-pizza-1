@@ -22,11 +22,7 @@ export default {
   },
   methods: {
     sendNameSize() {
-      this.$emit(
-        "nameSizePizza",
-        this.sizePizza.name,
-        this.sizePizza.multiplier
-      );
+      this.$emit("nameSizePizza", this.sizePizza);
     },
   },
 };

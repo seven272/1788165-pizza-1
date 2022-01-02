@@ -69,7 +69,7 @@
           <div @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
             <BuilderPizzaView
               :face-pizza="objDatesPizza"
-              :price-pizza="costPizza"
+              :price-pizza="objDatesPizza"
               :final-price-pizza="calculatePricePizza"
             />
           </div>
@@ -112,24 +112,59 @@ export default {
     arrDatesPizza: [],
     objDatesPizza: {
       dough: "Толстое",
-      sauce: "Томатный",
-      sortArrIngedients: [],
-    },
-    costPizza: {
       costDough: 300,
+      sauce: "Томатный",
       costSauce: 50,
-      multiplierSize: 1,
-      costIngredients: 0,
+      size: "23 см",
+      sortArrIngedients: [],
     },
   }),
   computed: {
     calculatePricePizza() {
       return (
-        this.costPizza.multiplierSize *
-        (this.costPizza.costDough +
-          this.costPizza.costSauce +
-          this.costPizza.costIngredients)
+        this.chooseSize *
+        (this.calculatePriceDough +
+          this.calculatePriceSauce +
+          this.countPriceIngredients)
       );
+    },
+    countPriceIngredients() {
+      let sumPlusIngredients = this.ingredientPrice.reduce((sum, elem) => {
+        return sum + elem;
+      }, 0);
+      let sumMinusIngredients = this.ingredientPriceDelete.reduce(
+        (sum, elem) => {
+          return sum + elem;
+        },
+        0
+      );
+      let finishCostIngredients = sumPlusIngredients - sumMinusIngredients;
+      return finishCostIngredients;
+    },
+    calculatePriceDough() {
+      let priceDough = 0;
+      if (this.objDatesPizza.dough) {
+        priceDough = 300;
+      }
+      return priceDough;
+    },
+    calculatePriceSauce() {
+      let priceSauce = 0;
+      if (this.objDatesPizza.sauce) {
+        priceSauce = 50;
+      }
+      return priceSauce;
+    },
+    chooseSize() {
+      let multiplierSize = 0;
+      if (this.objDatesPizza.size === "23 см") {
+        multiplierSize = 1;
+      } else if (this.objDatesPizza.size === "32 см") {
+        multiplierSize = 2;
+      } else if (this.objDatesPizza.size === "45 см") {
+        multiplierSize = 3;
+      }
+      return multiplierSize;
     },
   },
   methods: {
@@ -188,13 +223,11 @@ export default {
       this.ingredientId.push(title);
       this.ingredientPrice.push(price);
       this.makeNewArrayIngredients();
-      this.countPriceIngredients();
     },
     getDeleteNameIngred(title, price) {
       this.ingredientIdDelete.push(title);
       this.ingredientPriceDelete.push(price);
       this.makeNewArrayIngredients();
-      this.countPriceIngredients();
     },
     //сравниваем два массива удаленных и добавленных ингридиентов и формируем новый массив
     makeNewArrayIngredients() {
@@ -220,31 +253,14 @@ export default {
       this.objDatesPizza.sortArrIngedients = this.ingredientId;
       return this.ingredientId;
     },
-    countPriceIngredients() {
-      let sumPlusIngredients = this.ingredientPrice.reduce((sum, elem) => {
-        return sum + elem;
-      }, 0);
-      let sumMinusIngredients = this.ingredientPriceDelete.reduce(
-        (sum, elem) => {
-          return sum + elem;
-        },
-        0
-      );
-      let finishCostIngredients = sumPlusIngredients - sumMinusIngredients;
-      this.costPizza.costIngredients = finishCostIngredients;
-      return this.costPizza.costIngredients;
+    getDatesSize(dateSize) {
+      this.objDatesPizza.size = dateSize.name;
     },
-    getDatesSize(title, multiplier) {
-      this.objDatesPizza.size = title;
-      this.costPizza.multiplierSize = multiplier;
+    getDatesDough(dateDough) {
+      this.objDatesPizza.dough = dateDough.name;
     },
-    getDatesDough(title, price) {
-      this.objDatesPizza.dough = title;
-      this.costPizza.costDough = price;
-    },
-    getDatesSauce(title, price) {
-      this.objDatesPizza.sauce = title;
-      this.costPizza.costSauce = price;
+    getDatesSauce(dateSauce) {
+      this.objDatesPizza.sauce = dateSauce.name;
     },
     onDrop(evt) {
       const ingredient = evt.dataTransfer.getData("itemObj");
@@ -255,7 +271,6 @@ export default {
       this.ingredientPrice.push(ingredientCost);
       this.ingredientId.push(ingredientName);
       this.makeNewArrayIngredients();
-      this.countPriceIngredients();
     },
   },
 };
