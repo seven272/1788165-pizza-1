@@ -1,7 +1,6 @@
 /*eslint-disable*/
 <template>
   <body>
-    <AppLayoutHeader />
     <main class="content">
       <form action="#" method="post">
         <div class="content__wrapper">
@@ -88,11 +87,10 @@ import BuilderSizeSelector from "../modules/builder/components/BuilderSizeSelect
 import BuilderPizzaView from "../modules/builder/components/BuilderPizzaView.vue";
 import BuilderIngredientsSelector from "../modules/builder/components/BuilderIngredientsSelector.vue";
 import BuilderSauceSelector from "../modules/builder/components/BuilderSauceSelector.vue";
-import AppLayoutHeader from "../layouts/AppLayoutHeader.vue";
+// import AppLayoutHeader from "../layouts/AppLayoutHeader.vue";
 export default {
   name: "Index",
   components: {
-    AppLayoutHeader,
     BuilderDoughSelector,
     BuilderSizeSelector,
     BuilderPizzaView,
