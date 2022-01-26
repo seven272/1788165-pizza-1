@@ -1,5 +1,5 @@
 //в этом файле подключаем все глобальные компоненты
 import Vue from "vue";
-import AppHeader from "../layouts/AppLayoutHeader.vue";
+import AppLayout from "@/layouts/AppLayout.vue";
 
-Vue.component("AppHeader", AppHeader);
+Vue.component("AppLayout", AppLayout);
