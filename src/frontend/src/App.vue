@@ -1,16 +1,15 @@
+/* eslint-disable prettier/prettier */
 <template>
   <div id="app">
-    <Index />
+    <AppLayout>
+      <router-view></router-view>
+    </AppLayout>
   </div>
 </template>
-
 <script>
-import Index from "./views/Index.vue";
 export default {
   name: "App",
-  components: {
-    Index,
-  },
+  data: () => ({}),
 };
 </script>
 

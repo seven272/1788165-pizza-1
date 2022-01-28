@@ -1,82 +1,83 @@
 /*eslint-disable*/
 <template>
-  <body>
-    <AppLayoutHeader />
-    <main class="content">
-      <form action="#" method="post">
-        <div class="content__wrapper">
-          <h1 class="title title--big">Конструктор пиццы</h1>
-          <div class="content__dough">
-            <div class="sheet">
-              <h2 class="title title--small sheet__title">Выберите тесто</h2>
-              <div class="sheet__content dough">
-                <BuilderDoughSelector
-                  v-for="dough in makeNewObjectDough()"
-                  :key="dough.id"
-                  :dough-pizza="dough"
-                  @nameDoughPizza="getDatesDough"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="content__diameter">
-            <div class="sheet">
-              <h2 class="title title--small sheet__title">Выберите размер</h2>
-
-              <div class="sheet__content diameter">
-                <BuilderSizeSelector
-                  v-for="size in makeNewObjectSizes()"
-                  :key="size.id"
-                  :size-pizza="size"
-                  @nameSizePizza="getDatesSize"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="content__ingredients">
-            <div class="sheet">
-              <h2 class="title title--small sheet__title">
-                Выберите ингредиенты
-              </h2>
-              <div class="sheet__content ingredients">
-                <div class="ingredients__sauce">
-                  <p>Основной соус:</p>
-                  <BuilderSauceSelector
-                    v-for="sauce in makeNewObjectSauces()"
-                    :key="sauce.id"
-                    :sauce-pizza="sauce"
-                    @nameSaucePizza="getDatesSauce"
+  <div>
+    <body>
+      <main class="content">
+        <form action="#" method="post">
+          <div class="content__wrapper">
+            <h1 class="title title--big">Конструктор пиццы</h1>
+            <div class="content__dough">
+              <div class="sheet">
+                <h2 class="title title--small sheet__title">Выберите тесто</h2>
+                <div class="sheet__content dough">
+                  <BuilderDoughSelector
+                    v-for="dough in makeNewObjectDough()"
+                    :key="dough.id"
+                    :dough-pizza="dough"
+                    @nameDoughPizza="getDatesDough"
                   />
                 </div>
-                <div class="ingredients__filling">
-                  <p>Начинка:</p>
-                  <ul class="ingredients__list">
-                    <BuilderIngredientsSelector
-                      v-for="ingred in makeNewObjectIngredients()"
-                      :key="ingred.id"
-                      v-bind:ingredient_pizza="ingred"
-                      v-on:nameInged="getNameIngred"
-                      v-on:deleteInged="getDeleteNameIngred"
-                      v-on:click="makeNewArrayIngredients"
-                      draggable="true"
-                      @dragstart="onStartDrag($event)"
-                    />
-                  </ul>
+              </div>
+            </div>
+            <div class="content__diameter">
+              <div class="sheet">
+                <h2 class="title title--small sheet__title">Выберите размер</h2>
+
+                <div class="sheet__content diameter">
+                  <BuilderSizeSelector
+                    v-for="size in makeNewObjectSizes()"
+                    :key="size.id"
+                    :size-pizza="size"
+                    @nameSizePizza="getDatesSize"
+                  />
                 </div>
               </div>
             </div>
+            <div class="content__ingredients">
+              <div class="sheet">
+                <h2 class="title title--small sheet__title">
+                  Выберите ингредиенты
+                </h2>
+                <div class="sheet__content ingredients">
+                  <div class="ingredients__sauce">
+                    <p>Основной соус:</p>
+                    <BuilderSauceSelector
+                      v-for="sauce in makeNewObjectSauces()"
+                      :key="sauce.id"
+                      :sauce-pizza="sauce"
+                      @nameSaucePizza="getDatesSauce"
+                    />
+                  </div>
+                  <div class="ingredients__filling">
+                    <p>Начинка:</p>
+                    <ul class="ingredients__list">
+                      <BuilderIngredientsSelector
+                        v-for="ingred in makeNewObjectIngredients()"
+                        :key="ingred.id"
+                        v-bind:ingredient_pizza="ingred"
+                        v-on:nameInged="getNameIngred"
+                        v-on:deleteInged="getDeleteNameIngred"
+                        v-on:click="makeNewArrayIngredients"
+                        draggable="true"
+                        @dragstart="onStartDrag($event)"
+                      />
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
+              <BuilderPizzaView
+                :face-pizza="objDatesPizza"
+                :price-pizza="objDatesPizza"
+                :final-price-pizza="calculatePricePizza"
+              />
+            </div>
           </div>
-          <div @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
-            <BuilderPizzaView
-              :face-pizza="objDatesPizza"
-              :price-pizza="objDatesPizza"
-              :final-price-pizza="calculatePricePizza"
-            />
-          </div>
-        </div>
-      </form>
-    </main>
-  </body>
+        </form>
+      </main>
+    </body>
+  </div>
 </template>
 
 <script>
@@ -88,11 +89,9 @@ import BuilderSizeSelector from "../modules/builder/components/BuilderSizeSelect
 import BuilderPizzaView from "../modules/builder/components/BuilderPizzaView.vue";
 import BuilderIngredientsSelector from "../modules/builder/components/BuilderIngredientsSelector.vue";
 import BuilderSauceSelector from "../modules/builder/components/BuilderSauceSelector.vue";
-import AppLayoutHeader from "../layouts/AppLayoutHeader.vue";
 export default {
   name: "Index",
   components: {
-    AppLayoutHeader,
     BuilderDoughSelector,
     BuilderSizeSelector,
     BuilderPizzaView,
