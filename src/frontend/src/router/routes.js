@@ -13,31 +13,41 @@ const routes = [
     path: "/",
     name: "Home",
     component: Home,
-    meta: "header",
+    meta: {
+      layout: "AppLayoutMain",
+    },
   },
   {
     path: "/cart",
     name: "Cart",
     component: Cart,
-    meta: "sidebar",
+    meta: {
+      layout: "AppLayoutOther",
+    },
   },
   {
     path: "/login",
     name: "Login",
     component: Login,
-    meta: "header",
+    meta: {
+      layout: "AppLayoutMain",
+    },
   },
   {
     path: "/profile",
     name: "Profile",
     component: Profile,
-    meta: "sidebar",
+    meta: {
+      layout: "AppLayoutOther",
+    },
   },
   {
     path: "/orders",
     name: "Order",
     component: Order,
-    meta: "sidebar",
+    meta: {
+      layout: "AppLayoutOther",
+    },
   },
 ];
 const router = new VueRouter({

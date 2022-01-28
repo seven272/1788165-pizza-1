@@ -1,25 +1,18 @@
 <template>
   <div>
-    <component :is="changeLayout"> </component>
+    <component :is="changeLayout">
+      <slot></slot>
+    </component>
   </div>
 </template>
 <script>
-import AppLayoutHeader from "@/layouts/AppLayoutHeader.vue";
-import AppLayoutSidebar from "@/layouts/AppLayoutSidebar.vue";
+//шаблон по умолчанию (гдобальня область видимости )сох-ем в переменную, шаблоны для страниц импортируем непосредственно в вычисляемом свойстве
+const defaultLayout = "AppLayoutDefault";
 export default {
-  components: {
-    AppLayoutHeader,
-    AppLayoutSidebar,
-  },
   computed: {
     changeLayout() {
-      let layout = "AppLayoutHeader";
-      if (this.$route.meta === "header") {
-        layout = "AppLayoutHeader";
-      } else if (this.$route.meta === "sidebar") {
-        layout = "AppLayoutSidebar";
-      }
-      return layout;
+      const layout = this.$route.meta.layout || defaultLayout;
+      return () => import(`@/layouts/${layout}.vue`);
     },
   },
 };
