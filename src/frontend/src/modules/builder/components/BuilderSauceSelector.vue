@@ -1,5 +1,5 @@
 <template>
-  <label class="radio ingredients__input" @click="sendNameSauce">
+  <label class="radio ingredients__input" @click="changeSauce">
     <input type="radio" name="sauce" :value="`${saucePizza.value}`" checked />
     <span>{{ saucePizza.name }}</span>
   </label>
@@ -15,8 +15,8 @@ export default {
     },
   },
   methods: {
-    sendNameSauce() {
-      this.$emit("nameSaucePizza", this.saucePizza);
+    changeSauce() {
+      this.$store.commit("setSaucePizza", this.saucePizza.name);
     },
   },
 };

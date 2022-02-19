@@ -7,11 +7,11 @@
             <h1 class="title title--big">Корзина</h1>
           </div>
 
-          <!-- <div class="sheet cart__empty">
-          <p>В корзине нет ни одного товара</p>
-        </div> -->
+          <div class="sheet cart__empty" v-show="isCartEmpty">
+            <p>В корзине нет ни одного товара</p>
+          </div>
 
-          <ul class="cart-list sheet">
+          <ul class="cart-list sheet" v-show="!isCartEmpty">
             <li class="cart-list__item">
               <div class="product cart-list__product">
                 <img
@@ -121,7 +121,7 @@
             </li>
           </ul>
 
-          <div class="cart__additional">
+          <div class="cart__additional" v-show="!isCartEmpty">
             <ul class="additional-list">
               <li class="additional-list__item sheet">
                 <p class="additional-list__description">
@@ -307,17 +307,48 @@
           Перейти к конструктору<br />чтоб собрать ещё одну пиццу
         </p>
         <div class="footer__price">
-          <b>Итого: 2 228 ₽</b>
+          <b>Итого: {{ pricePizza }} ₽</b>
         </div>
 
         <div class="footer__submit">
-          <button type="submit" class="button">Оформить заказ</button>
+          <button type="submit" class="button" @click.prevent="showModal">
+            Оформить заказ
+          </button>
+          <Popup ref="popupWindow" />
         </div>
       </section>
     </form>
   </div>
 </template>
 <script>
-export default {};
+import { mapGetters } from "vuex";
+import Popup from "@/views/Popup.vue";
+export default {
+  data: () => ({}),
+  components: {
+    Popup,
+  },
+  computed: {
+    ...mapGetters({
+      pricePizza: "calculatePricePizza",
+      priceIngredients: "getCostIngredients",
+    }),
+    isCartEmpty() {
+      let cartСontents;
+      if (this.priceIngredients === 0) {
+        console.log(this.priceIngredients);
+        cartСontents = true;
+      } else {
+        cartСontents = false;
+      }
+      return cartСontents;
+    },
+  },
+  methods: {
+    showModal() {
+      this.$refs.popupWindow.show = true;
+    },
+  },
+};
 </script>
 <style scoped></style>
