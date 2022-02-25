@@ -25,8 +25,8 @@
                   <h2>{{ pizza.title }}</h2>
                   <ul>
                     <li>{{ pizza.size }}, на тонком тесте</li>
-                    <li>Соус: томатный</li>
-                    <li>Начинка: грибы, лук, ветчина, пармезан, ананас</li>
+                    <li>Соус: {{ pizza.sauce }}</li>
+                    <li>Начинка: {{ ingredientsString }}, пармезан, ананас</li>
                   </ul>
                 </div>
               </div>
@@ -331,6 +331,7 @@ export default {
   computed: {
     ...mapState({
       pizza: (state) => state.Builder.datesPizza,
+      dough: (state) => state.Builder.doughesPizza,
     }),
     ...mapGetters({
       pricePizza: "calculatePricePizza",
@@ -345,6 +346,10 @@ export default {
         cartСontents = false;
       }
       return cartСontents;
+    },
+    ingredientsString() {
+      let listIngred = this.pizza.sortArrIngedients.join(", ").toLowerCase();
+      return listIngred;
     },
   },
   methods: {
