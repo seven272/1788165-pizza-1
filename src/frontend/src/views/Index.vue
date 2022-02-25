@@ -78,7 +78,7 @@ import BuilderPizzaView from "../modules/builder/components/BuilderPizzaView.vue
 import BuilderIngredientsSelector from "../modules/builder/components/BuilderIngredientsSelector.vue";
 import BuilderSauceSelector from "../modules/builder/components/BuilderSauceSelector.vue";
 //импорт гетееров из vuex
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "Index",
   components: {
@@ -93,20 +93,22 @@ export default {
   computed: {
     //получаем геттеры из vuex
     ...mapGetters({
-      objectPizza: "getObjectPizza",
-      doughesPizza: "getDateDoughPizza",
-      saucesPizza: "getDateSaucePizza",
-      sizesPizza: "getDateSizePizza",
-      sizeOnePizza: "getNameSize",
       objectSauceWithClass: "addClassSauce",
       objectDoughWithClass: "addClassDough",
       objectSizeWithClass: "addClassSize",
       objectIngredientsWithClass: "addClassIngredient",
-      idIngred: "getIdIngred",
-      priceIngred: "getPriceIngred",
+      // idIngred: "getIdIngred",
+      // priceIngred: "getPriceIngred",
       idIngredDelete: "getDeleteIdIngred",
       priceIngredDelete: "getDeletePriceIngred",
       arraySortIngredients: "getNewArrayIngredients",
+    }),
+    ...mapState({
+      pizza: (state) => state.Builder.pizza,
+      doughPiz: (state) => state.Builder.datesPizza,
+      priceIngred: (state) => state.Builder.ingredientPrice,
+      idIngred: (state) => state.Builder.ingredientId,
+      // objectSauceWithClass: (state) => state.Builder.arrSauces,
     }),
   },
   methods: {
@@ -116,8 +118,8 @@ export default {
       const objIngredient = JSON.parse(ingredient);
       const ingredientName = objIngredient.name;
       const ingredientCost = objIngredient.price;
-      this.ingredientPrice.push(ingredientCost);
-      this.ingredientId.push(ingredientName);
+      this.priceIngred.push(ingredientCost);
+      this.idIngred.push(ingredientName);
     },
   },
 };

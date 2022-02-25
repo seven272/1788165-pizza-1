@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "BuilderPizzaView",
   props: {},
@@ -47,11 +47,14 @@ export default {
   components: {},
   computed: {
     ...mapGetters({
-      nameDough: "getNameDough",
-      nameSauce: "getNameSauce",
       pricePizza: "calculatePricePizza",
       arraySortIngredients: "getNewArrayIngredients",
-      namePizza: "getTitlePizza",
+    }),
+    ...mapState({
+      nameDough: (state) => state.Builder.datesPizza.dough,
+      nameSauce: (state) => state.Builder.datesPizza.sauce,
+      namePizza: (state) => state.Builder.datesPizza.title,
+      // pricePizza: (state) => state.Builder.datesPizza.finishPricePizza,
     }),
     getTitle: {
       get() {

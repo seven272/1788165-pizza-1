@@ -3,16 +3,11 @@ export default {
   state: {
     pizza: jsonPizza,
     doughesPizza: jsonPizza.dough,
-    arrSauces: [],
-    arrDoughes: [],
-    arrSizes: [],
     arrIngredients: [],
-    //еще не задействованные переменные
     ingredientId: [],
     ingredientIdDelete: [],
     ingredientPrice: [],
     ingredientPriceDelete: [],
-    //
     multiplierSize: 0,
     datesPizza: {
       title: "",
@@ -23,48 +18,37 @@ export default {
       size: "23 см",
       sortArrIngedients: [],
       costIngredients: 0,
+      finishPricePizza: 1,
     },
     finishPricePizza: 0,
   },
   getters: {
-    getTitlePizza: (state) => {
-      return state.datesPizza.title;
-    },
-    getDateDoughPizza: (state) => {
-      return state.pizza.dough;
-    },
-    getDateSaucePizza: (state) => {
-      return state.pizza.sauces;
-    },
-    getDateSizePizza: (state) => {
-      return state.pizza.sizes;
-    },
-    getCostIngredients: (state) => {
-      return state.datesPizza.costIngredients;
-    },
     addClassSauce: (state) => {
+      let arrSauces = [];
       let arrSauceValues = ["tomato", "creamy"];
       for (let i = 0; i < state.pizza.sauces.length; i++) {
         state.pizza.sauces[i]["value"] = arrSauceValues[i];
-        state.arrSauces.push(state.pizza.sauces[i]);
+        arrSauces.push(state.pizza.sauces[i]);
       }
-      return state.arrSauces;
+      return arrSauces;
     },
     addClassDough: (state) => {
+      let arrDoughes = [];
       let arrDoughValues = ["light", "large"];
       for (let i = 0; i < state.pizza.dough.length; i++) {
         state.pizza.dough[i]["value"] = arrDoughValues[i];
-        state.arrDoughes.push(state.pizza.dough[i]);
+        arrDoughes.push(state.pizza.dough[i]);
       }
-      return state.arrDoughes;
+      return arrDoughes;
     },
     addClassSize: (state) => {
+      let arrSizes = [];
       let arrSizeValues = ["small", "normal", "big"];
       for (let i = 0; i < state.pizza.sizes.length; i++) {
         state.pizza.sizes[i]["value"] = arrSizeValues[i];
-        state.arrSizes.push(state.pizza.sizes[i]);
+        arrSizes.push(state.pizza.sizes[i]);
       }
-      return state.arrSizes;
+      return arrSizes;
     },
     addClassIngredient: (state) => {
       state.pizza.ingredients.forEach((element) => {
@@ -89,30 +73,6 @@ export default {
       });
       return state.arrIngredients;
     },
-    getObjectPizza: (state) => {
-      return state.datesPizza;
-    },
-    getNameDough: (state) => {
-      return state.datesPizza.dough;
-    },
-    getNameSauce: (state) => {
-      return state.datesPizza.sauce;
-    },
-    getNameSize: (state) => {
-      return state.datesPizza.size;
-    },
-    getIdIngred: (state) => {
-      return state.ingredientId;
-    },
-    getPriceIngred: (state) => {
-      return state.ingredientPrice;
-    },
-    getDeleteIdIngred: (state) => {
-      return state.ingredientIdDelete;
-    },
-    getDeletePriceIngred: (state) => {
-      return state.ingredientPriceDelete;
-    },
     getNewArrayIngredients: (state) => {
       let arr1 = state.ingredientId;
       let arr2 = state.ingredientIdDelete;
@@ -134,16 +94,17 @@ export default {
         .sort();
       state.ingredientId = filterArr;
       state.datesPizza.sortArrIngedients = state.ingredientId;
-      // console.log(state.datesPizza.sortArrIngedients);
       return state.datesPizza.sortArrIngedients;
     },
     calculatePricePizza(state, getters) {
-      state.finishPricePizza =
+      let finalPrice =
         getters.chooseSize *
         (getters.calculatePriceDough +
           getters.calculatePriceSauce +
           getters.countPriceIngredients);
-      return state.finishPricePizza;
+      state.finishPricePizza = finalPrice;
+      console.log(state.datesPizza);
+      return finalPrice;
     },
     countPriceIngredients(state) {
       let sumPlusIngredients = state.ingredientPrice.reduce((sum, elem) => {
@@ -192,16 +153,12 @@ export default {
     setSizePizza: (state, payload) => {
       state.datesPizza.size = payload;
     },
-    setNewNameIngredient: (state, name) => {
+    setNewNameAndPriceIngredient: (state, { name, price }) => {
       state.ingredientId.push(name);
-    },
-    setNewPriceIngredient: (state, price) => {
       state.ingredientPrice.push(price);
     },
-    setDeleteNameIngredient: (state, name) => {
+    setDeleteNameAndPriceIngredient: (state, { name, price }) => {
       state.ingredientIdDelete.push(name);
-    },
-    setDeletePriceIngredient: (state, price) => {
       state.ingredientPriceDelete.push(price);
     },
     setTitlePizza: (state, title) => {

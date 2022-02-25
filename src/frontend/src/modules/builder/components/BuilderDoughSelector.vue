@@ -22,22 +22,7 @@ export default {
       default: () => {},
     },
   },
-  computed: {
-    getDough() {
-      let dough = this.$store.getters.getDateDoughPizza;
-      console.log(dough);
-      return dough;
-    },
-    getOneDoughPizza() {
-      let dough = this.$store.getters.getOneDough;
-      console.log(dough);
-      return dough;
-    },
-  },
   methods: {
-    // sendNameDough() {
-    //   this.$emit("nameDoughPizza", this.doughPizza);
-    // },
     changeDough() {
       this.$store.commit("setDoughPizza", this.doughPizza.name);
     },

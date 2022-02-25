@@ -39,12 +39,9 @@
 </template>
 
 <script>
-// Импортируем JSON данные и статусы для карточек ингридиентов.
-import pizza from "../../../static/pizza.json";
 export default {
   name: "BuilderIngredientsSelector",
   data: () => ({
-    newobj: pizza.ingredients,
     inputValue: 0,
     counterIngredients: 0,
   }),
@@ -57,31 +54,15 @@ export default {
   methods: {
     //методы для хранилища
     sendNameAndPrice() {
-      this.$store.commit("setNewNameIngredient", this.ingredient_pizza.name);
-      this.$store.commit("setNewPriceIngredient", this.ingredient_pizza.price);
+      this.$store.commit("setNewNameAndPriceIngredient", this.ingredient_pizza);
     },
     sendDeleteNameAndPrice() {
-      this.$store.commit("setDeleteNameIngredient", this.ingredient_pizza.name);
       this.$store.commit(
-        "setDeletePriceIngredient",
-        this.ingredient_pizza.price
+        "setDeleteNameAndPriceIngredient",
+        this.ingredient_pizza
       );
     },
     //конец методов для хранилища
-    // sendNameIngred() {
-    //   this.$emit(
-    //     "nameInged",
-    //     this.ingredient_pizza.name,
-    //     this.ingredient_pizza.price
-    //   );
-    // },
-    // deleteNameIngred() {
-    //   this.$emit(
-    //     "deleteInged",
-    //     this.ingredient_pizza.name,
-    //     this.ingredient_pizza.price
-    //   );
-    // },
     onClickAddIngredient() {
       this.counterIngredients++;
       this.inputValue = this.counterIngredients;
@@ -91,13 +72,11 @@ export default {
       this.inputValue = this.counterIngredients;
     },
     multiplyMehtodsDeleteIngredient() {
-      // this.deleteNameIngred();
       this.onClickDeleteIngredient();
       this.sendDeleteNameAndPrice();
     },
     multiplyMehtodsAddIngredient() {
       this.onClickAddIngredient();
-      // this.sendNameIngred();
       this.sendNameAndPrice();
     },
     onDrag(evt, ingredient) {
@@ -107,7 +86,6 @@ export default {
       const strIngredient = JSON.stringify(ingredient);
       evt.dataTransfer.setData("itemObj", strIngredient);
       this.onClickAddIngredient();
-      this.sendNameAndPrice();
     },
   },
   computed: {

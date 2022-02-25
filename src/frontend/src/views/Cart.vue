@@ -22,9 +22,9 @@
                   alt="Капричоза"
                 />
                 <div class="product__text">
-                  <h2>Капричоза</h2>
+                  <h2>{{ pizza.title }}</h2>
                   <ul>
-                    <li>30 см, на тонком тесте</li>
+                    <li>{{ pizza.size }}, на тонком тесте</li>
                     <li>Соус: томатный</li>
                     <li>Начинка: грибы, лук, ветчина, пармезан, ананас</li>
                   </ul>
@@ -57,14 +57,14 @@
               </div>
 
               <div class="cart-list__price">
-                <b>782 ₽</b>
+                <b>{{ pricePizza }} ₽</b>
               </div>
 
               <div class="cart-list__button">
                 <button type="button" class="cart-list__edit">Изменить</button>
               </div>
             </li>
-            <li class="cart-list__item">
+            <!-- <li class="cart-list__item">
               <div class="product cart-list__product">
                 <img
                   src="@/assets/img/product.svg"
@@ -118,7 +118,7 @@
               <div class="cart-list__button">
                 <button type="button" class="cart-list__edit">Изменить</button>
               </div>
-            </li>
+            </li> -->
           </ul>
 
           <div class="cart__additional" v-show="!isCartEmpty">
@@ -321,7 +321,7 @@
   </div>
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import Popup from "@/views/Popup.vue";
 export default {
   data: () => ({}),
@@ -329,6 +329,9 @@ export default {
     Popup,
   },
   computed: {
+    ...mapState({
+      pizza: (state) => state.Builder.datesPizza,
+    }),
     ...mapGetters({
       pricePizza: "calculatePricePizza",
       priceIngredients: "getCostIngredients",

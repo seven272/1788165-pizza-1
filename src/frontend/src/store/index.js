@@ -8,14 +8,8 @@ import Auth from "@/store/modules/Auth.js";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {
-    info: "Корневой модуль VUEX в файле index.js",
-  },
-  getters: {
-    INFO: (state) => {
-      return state.info;
-    },
-  },
+  state: {},
+  getters: {},
   mutations: {},
   actions: {},
   modules: {
