@@ -3,12 +3,10 @@ export default {
   state: {
     pizza: jsonPizza,
     doughesPizza: jsonPizza.dough,
-    arrIngredients: [],
     ingredientId: [],
     ingredientIdDelete: [],
     ingredientPrice: [],
     ingredientPriceDelete: [],
-    multiplierSize: 0,
     datesPizza: {
       title: "",
       dough: "Толстое",
@@ -16,11 +14,10 @@ export default {
       sauce: "Томатный",
       costSauce: 50,
       size: "23 см",
-      sortArrIngedients: [],
-      costIngredients: 0,
-      finishPricePizza: 1,
     },
     finishPricePizza: 0,
+    counterIngredients: 0,
+    inputValue: 10,
   },
   getters: {
     addClassSauce: (state) => {
@@ -50,7 +47,17 @@ export default {
       }
       return arrSizes;
     },
+    typeDough: (state) => {
+      let value = "";
+      if (state.datesPizza.dough === "Толстое") {
+        value = "на толстом тесте";
+      } else {
+        value = "на тонком тесте";
+      }
+      return value;
+    },
     addClassIngredient: (state) => {
+      let arrIngredients = [];
       state.pizza.ingredients.forEach((element) => {
         //преобразуем на каждой итерации цикла обькт в массив
         const values = Object.values(element);
@@ -69,11 +76,12 @@ export default {
         objIngredients["name"] = element.name;
         objIngredients["price"] = element.price;
         objIngredients["style"] = newVal[0];
-        state.arrIngredients.push(objIngredients);
+        arrIngredients.push(objIngredients);
       });
-      return state.arrIngredients;
+      return arrIngredients;
     },
     getNewArrayIngredients: (state) => {
+      let sortArrIngedients = [];
       let arr1 = state.ingredientId;
       let arr2 = state.ingredientIdDelete;
       let newArr = arr1.map((elem) => {
@@ -93,8 +101,8 @@ export default {
         })
         .sort();
       state.ingredientId = filterArr;
-      state.datesPizza.sortArrIngedients = state.ingredientId;
-      return state.datesPizza.sortArrIngedients;
+      sortArrIngedients = state.ingredientId;
+      return sortArrIngedients;
     },
     calculatePricePizza(state, getters) {
       let finalPrice =
@@ -103,10 +111,10 @@ export default {
           getters.calculatePriceSauce +
           getters.countPriceIngredients);
       state.finishPricePizza = finalPrice;
-      console.log(state.datesPizza);
       return finalPrice;
     },
     countPriceIngredients(state) {
+      let costIngredients = 0;
       let sumPlusIngredients = state.ingredientPrice.reduce((sum, elem) => {
         return sum + elem;
       }, 0);
@@ -116,31 +124,33 @@ export default {
         },
         0
       );
-      state.datesPizza.costIngredients =
-        sumPlusIngredients - sumMinusIngredients;
-      return state.datesPizza.costIngredients;
+      costIngredients = sumPlusIngredients - sumMinusIngredients;
+      return costIngredients;
     },
     calculatePriceDough(state) {
+      let priceDough = 0;
       if (state.datesPizza.costDough) {
-        state.datesPizza.costDough = 300;
+        priceDough = 300;
       }
-      return state.datesPizza.costDough;
+      return priceDough;
     },
     calculatePriceSauce(state) {
+      let priceSauce = 0;
       if (state.datesPizza.costSauce) {
-        state.datesPizza.costSauce = 50;
+        priceSauce = 50;
       }
-      return state.datesPizza.costSauce;
+      return priceSauce;
     },
     chooseSize(state) {
+      let multiplierSize = 0;
       if (state.datesPizza.size === "23 см") {
-        state.multiplierSize = 1;
+        multiplierSize = 1;
       } else if (state.datesPizza.size === "32 см") {
-        state.multiplierSize = 2;
+        multiplierSize = 2;
       } else if (state.datesPizza.size === "45 см") {
-        state.multiplierSize = 3;
+        multiplierSize = 3;
       }
-      return state.multiplierSize;
+      return multiplierSize;
     },
   },
   mutations: {

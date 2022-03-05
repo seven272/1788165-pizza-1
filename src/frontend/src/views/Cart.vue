@@ -12,7 +12,7 @@
           </div>
 
           <ul class="cart-list sheet" v-show="!isCartEmpty">
-            <li class="cart-list__item">
+            <li class="cart-list__item" v-show="showThisPizza">
               <div class="product cart-list__product">
                 <img
                   src="@/assets/img/product.svg"
@@ -24,9 +24,9 @@
                 <div class="product__text">
                   <h2>{{ pizza.title }}</h2>
                   <ul>
-                    <li>{{ pizza.size }}, на тонком тесте</li>
+                    <li>{{ pizza.size }}, {{ doughType }}</li>
                     <li>Соус: {{ pizza.sauce }}</li>
-                    <li>Начинка: {{ ingredientsString }}, пармезан, ананас</li>
+                    <li>Начинка: {{ ingredientsString }}</li>
                   </ul>
                 </div>
               </div>
@@ -35,6 +35,7 @@
                 <button
                   type="button"
                   class="counter__button counter__button--minus"
+                  @click="sendCounterMinusValue"
                 >
                   <span class="visually-hidden">Меньше</span>
                 </button>
@@ -42,7 +43,7 @@
                   type="text"
                   name="counter"
                   class="counter__input"
-                  value="1"
+                  :value="counter"
                 />
                 <button
                   type="button"
@@ -51,17 +52,22 @@
                     counter__button--plus
                     counter__button--orange
                   "
+                  @click="sendCounterPlusValue"
                 >
                   <span class="visually-hidden">Больше</span>
                 </button>
               </div>
 
               <div class="cart-list__price">
-                <b>{{ pricePizza }} ₽</b>
+                <b>{{ pricePizzas }} ₽</b>
               </div>
 
               <div class="cart-list__button">
-                <button type="button" class="cart-list__edit">Изменить</button>
+                <router-link :to="'/'">
+                  <button type="button" class="cart-list__edit">
+                    Изменить
+                  </button>
+                </router-link>
               </div>
             </li>
             <!-- <li class="cart-list__item">
@@ -139,6 +145,8 @@
                     <button
                       type="button"
                       class="counter__button counter__button--minus"
+                      @click="sendCounterColaMinus"
+                      :disabled="isDisabledButtonCola"
                     >
                       <span class="visually-hidden">Меньше</span>
                     </button>
@@ -146,7 +154,7 @@
                       type="text"
                       name="counter"
                       class="counter__input"
-                      value="2"
+                      :value="counterCola"
                     />
                     <button
                       type="button"
@@ -155,6 +163,7 @@
                         counter__button--plus
                         counter__button--orange
                       "
+                      @click="sendCounterColaPlus"
                     >
                       <span class="visually-hidden">Больше</span>
                     </button>
@@ -181,6 +190,8 @@
                     <button
                       type="button"
                       class="counter__button counter__button--minus"
+                      @click="sendCounterSauceMinus"
+                      :disabled="isDisabledButtonSauce"
                     >
                       <span class="visually-hidden">Меньше</span>
                     </button>
@@ -188,7 +199,7 @@
                       type="text"
                       name="counter"
                       class="counter__input"
-                      value="2"
+                      :value="counterSauce"
                     />
                     <button
                       type="button"
@@ -197,6 +208,7 @@
                         counter__button--plus
                         counter__button--orange
                       "
+                      @click="sendCounterSaucePlus"
                     >
                       <span class="visually-hidden">Больше</span>
                     </button>
@@ -223,6 +235,8 @@
                     <button
                       type="button"
                       class="counter__button counter__button--minus"
+                      @click="sendCounterFriesMinus"
+                      :disabled="isDisabledButtonFries"
                     >
                       <span class="visually-hidden">Меньше</span>
                     </button>
@@ -230,7 +244,7 @@
                       type="text"
                       name="counter"
                       class="counter__input"
-                      value="2"
+                      :value="counterFries"
                     />
                     <button
                       type="button"
@@ -239,6 +253,7 @@
                         counter__button--plus
                         counter__button--orange
                       "
+                      @click="sendCounterFriesPlus"
                     >
                       <span class="visually-hidden">Больше</span>
                     </button>
@@ -307,7 +322,7 @@
           Перейти к конструктору<br />чтоб собрать ещё одну пиццу
         </p>
         <div class="footer__price">
-          <b>Итого: {{ pricePizza }} ₽</b>
+          <b>Итого: {{ priceAllProducts }} ₽</b>
         </div>
 
         <div class="footer__submit">
@@ -332,15 +347,23 @@ export default {
     ...mapState({
       pizza: (state) => state.Builder.datesPizza,
       dough: (state) => state.Builder.doughesPizza,
+      counter: (state) => state.Cart.countClick,
+      showThisPizza: (state) => state.Cart.isShowPizza,
+      counterCola: (state) => state.Cart.priceProducts.colaClick,
+      counterSauce: (state) => state.Cart.priceProducts.sauceClick,
+      counterFries: (state) => state.Cart.priceProducts.friesClick,
     }),
     ...mapGetters({
       pricePizza: "calculatePricePizza",
-      priceIngredients: "getCostIngredients",
+      ingredients: "getNewArrayIngredients",
+      pricePizzas: "plusPizza",
+      priceOtherGoods: "additionalProducts",
+      priceAllProducts: "finalPriceWihtAllGoods",
+      doughType: "typeDough",
     }),
     isCartEmpty() {
       let cartСontents;
       if (this.priceIngredients === 0) {
-        console.log(this.priceIngredients);
         cartСontents = true;
       } else {
         cartСontents = false;
@@ -348,13 +371,64 @@ export default {
       return cartСontents;
     },
     ingredientsString() {
-      let listIngred = this.pizza.sortArrIngedients.join(", ").toLowerCase();
+      let listIngred = this.ingredients.join(", ").toLowerCase();
       return listIngred;
+    },
+    isDisabledButtonCola() {
+      let bulianButton = true;
+      if (this.counterCola === 0) {
+        bulianButton = true;
+      } else {
+        bulianButton = false;
+      }
+      return bulianButton;
+    },
+    isDisabledButtonSauce() {
+      let bulianButton = true;
+      if (this.counterSauce === 0) {
+        bulianButton = true;
+      } else {
+        bulianButton = false;
+      }
+      return bulianButton;
+    },
+    isDisabledButtonFries() {
+      let bulianButton = true;
+      if (this.counterFries === 0) {
+        bulianButton = true;
+      } else {
+        bulianButton = false;
+      }
+      return bulianButton;
     },
   },
   methods: {
     showModal() {
       this.$refs.popupWindow.show = true;
+    },
+    sendCounterPlusValue() {
+      this.$store.commit("zoomInCounter", 1);
+    },
+    sendCounterMinusValue() {
+      this.$store.commit("zoomOutCounter", 1);
+    },
+    sendCounterColaPlus() {
+      this.$store.commit("plusCounterCola", 1);
+    },
+    sendCounterColaMinus() {
+      this.$store.commit("minusCounterCola", 1);
+    },
+    sendCounterSaucePlus() {
+      this.$store.commit("plusCounterSauce", 1);
+    },
+    sendCounterSauceMinus() {
+      this.$store.commit("minusCounterSauce", 1);
+    },
+    sendCounterFriesPlus() {
+      this.$store.commit("plusCounterFries", 1);
+    },
+    sendCounterFriesMinus() {
+      this.$store.commit("minusCounterFries", 1);
     },
   },
 };

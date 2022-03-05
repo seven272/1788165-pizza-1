@@ -1,3 +1,4 @@
+/* eslint-disable vue/return-in-computed-property */
 <template>
   <li
     class="ingredients__item"
@@ -14,7 +15,7 @@
         type="button"
         class="counter__button counter__button--minus"
         :disabled="isDisabledButtonMinus"
-        @click="multiplyMehtodsDeleteIngredient()"
+        @click="sendDeleteNameAndPrice()"
       >
         <span class="visually-hidden">Меньше</span>
       </button>
@@ -23,14 +24,14 @@
         type="text"
         name="counter"
         class="counter__input"
-        :value="inputValue"
+        :value="lengthIngredients >= 1 ? lengthIngredients : 0"
       />
       <button
         ref="buttonPlus"
         type="button"
         class="counter__button counter__button--plus"
         :disabled="isDisabledButtonPlus"
-        @click="multiplyMehtodsAddIngredient()"
+        @click="sendNameAndPrice()"
       >
         <span class="visually-hidden">Больше</span>
       </button>
@@ -39,12 +40,9 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from "vuex";
 export default {
   name: "BuilderIngredientsSelector",
-  data: () => ({
-    inputValue: 0,
-    counterIngredients: 0,
-  }),
   props: {
     ingredient_pizza: {
       type: Object,
@@ -63,53 +61,54 @@ export default {
       );
     },
     //конец методов для хранилища
-    onClickAddIngredient() {
-      this.counterIngredients++;
-      this.inputValue = this.counterIngredients;
-    },
-    onClickDeleteIngredient() {
-      this.counterIngredients--;
-      this.inputValue = this.counterIngredients;
-    },
-    multiplyMehtodsDeleteIngredient() {
-      this.onClickDeleteIngredient();
-      this.sendDeleteNameAndPrice();
-    },
-    multiplyMehtodsAddIngredient() {
-      this.onClickAddIngredient();
-      this.sendNameAndPrice();
-    },
     onDrag(evt, ingredient) {
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
       //преобразуем обьект в строку
       const strIngredient = JSON.stringify(ingredient);
       evt.dataTransfer.setData("itemObj", strIngredient);
-      this.onClickAddIngredient();
     },
   },
   computed: {
+    ...mapState({
+      value: (state) => state.Builder.inputValue,
+      counter: (state) => state.Builder.counterIngredients,
+    }),
+    ...mapGetters({
+      arrayIngredients: "getNewArrayIngredients",
+    }),
+    // eslint-disable-next-line vue/return-in-computed-property
+    lengthIngredients() {
+      let ingredients = [];
+      if (this.arrayIngredients.includes(this.ingredient_pizza.name)) {
+        let ingred = this.ingredient_pizza.name;
+        ingredients = this.arrayIngredients.filter(function (elem) {
+          return elem === ingred;
+        });
+        return ingredients.length;
+      }
+    },
     isDisabledButtonPlus() {
       let bulianValueBtnPlus = false;
-      if (this.counterIngredients >= 3) {
+      if (this.lengthIngredients >= 3) {
         bulianValueBtnPlus = true;
-      } else if (this.counterIngredients < 3) {
+      } else if (this.lengthIngredients < 3) {
         bulianValueBtnPlus = false;
       }
       return bulianValueBtnPlus;
     },
     isDisabledButtonMinus() {
       let bulianValueBtnMinus = true;
-      if (this.counterIngredients === 0) {
+      if (this.lengthIngredients === 0) {
         bulianValueBtnMinus = true;
-      } else if (this.counterIngredients > 0 || this.counterIngredients < 3) {
+      } else if (this.lengthIngredients > 0 || this.lengthIngredients < 3) {
         bulianValueBtnMinus = false;
       }
       return bulianValueBtnMinus;
     },
     isDisabledDraggble() {
       let bulianValueDraggble = true;
-      if (this.counterIngredients >= 3) {
+      if (this.lengthIngredients >= 3) {
         bulianValueDraggble = false;
       } else {
         bulianValueDraggble = true;

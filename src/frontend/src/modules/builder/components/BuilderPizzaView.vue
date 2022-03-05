@@ -54,7 +54,6 @@ export default {
       nameDough: (state) => state.Builder.datesPizza.dough,
       nameSauce: (state) => state.Builder.datesPizza.sauce,
       namePizza: (state) => state.Builder.datesPizza.title,
-      // pricePizza: (state) => state.Builder.datesPizza.finishPricePizza,
     }),
     getTitle: {
       get() {

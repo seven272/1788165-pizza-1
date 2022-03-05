@@ -97,8 +97,6 @@ export default {
       objectDoughWithClass: "addClassDough",
       objectSizeWithClass: "addClassSize",
       objectIngredientsWithClass: "addClassIngredient",
-      // idIngred: "getIdIngred",
-      // priceIngred: "getPriceIngred",
       idIngredDelete: "getDeleteIdIngred",
       priceIngredDelete: "getDeletePriceIngred",
       arraySortIngredients: "getNewArrayIngredients",
@@ -108,7 +106,6 @@ export default {
       doughPiz: (state) => state.Builder.datesPizza,
       priceIngred: (state) => state.Builder.ingredientPrice,
       idIngred: (state) => state.Builder.ingredientId,
-      // objectSauceWithClass: (state) => state.Builder.arrSauces,
     }),
   },
   methods: {
