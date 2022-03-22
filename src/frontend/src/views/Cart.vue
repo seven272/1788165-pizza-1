@@ -12,119 +12,11 @@
           </div>
 
           <ul class="cart-list sheet" v-show="!isCartEmpty">
-            <li class="cart-list__item" v-show="showThisPizza">
-              <div class="product cart-list__product">
-                <img
-                  src="@/assets/img/product.svg"
-                  class="product__img"
-                  width="56"
-                  height="56"
-                  alt="Капричоза"
-                />
-                <div class="product__text">
-                  <h2>{{ pizza.title }}</h2>
-                  <ul>
-                    <li>{{ pizza.size }}, {{ doughType }}</li>
-                    <li>Соус: {{ pizza.sauce }}</li>
-                    <li>Начинка: {{ ingredientsString }}</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="counter cart-list__counter">
-                <button
-                  type="button"
-                  class="counter__button counter__button--minus"
-                  @click="sendCounterMinusValue"
-                >
-                  <span class="visually-hidden">Меньше</span>
-                </button>
-                <input
-                  type="text"
-                  name="counter"
-                  class="counter__input"
-                  :value="counter"
-                />
-                <button
-                  type="button"
-                  class="
-                    counter__button
-                    counter__button--plus
-                    counter__button--orange
-                  "
-                  @click="sendCounterPlusValue"
-                >
-                  <span class="visually-hidden">Больше</span>
-                </button>
-              </div>
-
-              <div class="cart-list__price">
-                <b>{{ pricePizzas }} ₽</b>
-              </div>
-
-              <div class="cart-list__button">
-                <router-link :to="'/'">
-                  <button type="button" class="cart-list__edit">
-                    Изменить
-                  </button>
-                </router-link>
-              </div>
-            </li>
-            <!-- <li class="cart-list__item">
-              <div class="product cart-list__product">
-                <img
-                  src="@/assets/img/product.svg"
-                  class="product__img"
-                  width="56"
-                  height="56"
-                  alt="Любимая пицца"
-                />
-                <div class="product__text">
-                  <h2>Любимая пицца</h2>
-                  <ul>
-                    <li>30 см, на тонком тесте</li>
-                    <li>Соус: томатный</li>
-                    <li>
-                      Начинка: грибы, лук, ветчина, пармезан, ананас, бекон, блю
-                      чиз
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="counter cart-list__counter">
-                <button
-                  type="button"
-                  class="counter__button counter__button--minus"
-                >
-                  <span class="visually-hidden">Меньше</span>
-                </button>
-                <input
-                  type="text"
-                  name="counter"
-                  class="counter__input"
-                  value="2"
-                />
-                <button
-                  type="button"
-                  class="
-                    counter__button
-                    counter__button--plus
-                    counter__button--orange
-                  "
-                >
-                  <span class="visually-hidden">Больше</span>
-                </button>
-              </div>
-
-              <div class="cart-list__price">
-                <b>782 ₽</b>
-              </div>
-
-              <div class="cart-list__button">
-                <button type="button" class="cart-list__edit">Изменить</button>
-              </div>
-            </li> -->
+            <CartPizzaView
+              v-for="(element, index) in pizzas"
+              :key="index"
+              :date_pizza="element"
+            />
           </ul>
 
           <div class="cart__additional" v-show="!isCartEmpty">
@@ -137,7 +29,7 @@
                     height="60"
                     alt="Coca-Cola 0,5 литра"
                   />
-                  <span>Coca-Cola 0,5 литра</span>
+                  <span>{{ additionalGoods[0].name }}</span>
                 </p>
 
                 <div class="additional-list__wrapper">
@@ -170,7 +62,7 @@
                   </div>
 
                   <div class="additional-list__price">
-                    <b>× 56 ₽</b>
+                    <b>× {{ additionalGoods[0].price }} ₽</b>
                   </div>
                 </div>
               </li>
@@ -182,7 +74,7 @@
                     height="60"
                     alt="Острый соус"
                   />
-                  <span>Острый соус</span>
+                  <span>{{ additionalGoods[1].name }}</span>
                 </p>
 
                 <div class="additional-list__wrapper">
@@ -215,7 +107,7 @@
                   </div>
 
                   <div class="additional-list__price">
-                    <b>× 30 ₽</b>
+                    <b>× {{ additionalGoods[1].price }} ₽</b>
                   </div>
                 </div>
               </li>
@@ -227,7 +119,7 @@
                     height="60"
                     alt="Картошка из печи"
                   />
-                  <span>Картошка из печи</span>
+                  <span>{{ additionalGoods[2].name }}</span>
                 </p>
 
                 <div class="additional-list__wrapper">
@@ -260,7 +152,7 @@
                   </div>
 
                   <div class="additional-list__price">
-                    <b>× 56 ₽</b>
+                    <b>× {{ additionalGoods[2].price }} ₽</b>
                   </div>
                 </div>
               </li>
@@ -313,11 +205,13 @@
         </div>
       </main>
       <section class="footer">
-        <div class="footer__more">
-          <a href="#" class="button button--border button--arrow"
-            >Хочу еще одну</a
-          >
-        </div>
+        <router-link :to="'/'">
+          <div class="footer__more" @click="multiplyMethodsForNewpizza">
+            <a href="#" class="button button--border button--arrow"
+              >Хочу еще одну</a
+            >
+          </div>
+        </router-link>
         <p class="footer__text">
           Перейти к конструктору<br />чтоб собрать ещё одну пиццу
         </p>
@@ -338,20 +232,22 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import Popup from "@/views/Popup.vue";
+import CartPizzaView from "@/modules/cart/CartPizzaView.vue";
 export default {
   data: () => ({}),
   components: {
     Popup,
+    CartPizzaView,
   },
   computed: {
     ...mapState({
       pizza: (state) => state.Builder.datesPizza,
       dough: (state) => state.Builder.doughesPizza,
-      counter: (state) => state.Cart.countClick,
-      showThisPizza: (state) => state.Cart.isShowPizza,
       counterCola: (state) => state.Cart.priceProducts.colaClick,
       counterSauce: (state) => state.Cart.priceProducts.sauceClick,
       counterFries: (state) => state.Cart.priceProducts.friesClick,
+      additionalGoods: (state) => state.Cart.misc,
+      pizzas: (state) => state.Cart.arrayPizzas,
     }),
     ...mapGetters({
       pricePizza: "calculatePricePizza",
@@ -359,7 +255,7 @@ export default {
       pricePizzas: "plusPizza",
       priceOtherGoods: "additionalProducts",
       priceAllProducts: "finalPriceWihtAllGoods",
-      doughType: "typeDough",
+      priceAllPizzas: "priceAllPizzas",
     }),
     isCartEmpty() {
       let cartСontents;
@@ -369,10 +265,6 @@ export default {
         cartСontents = false;
       }
       return cartСontents;
-    },
-    ingredientsString() {
-      let listIngred = this.ingredients.join(", ").toLowerCase();
-      return listIngred;
     },
     isDisabledButtonCola() {
       let bulianButton = true;
@@ -406,12 +298,6 @@ export default {
     showModal() {
       this.$refs.popupWindow.show = true;
     },
-    sendCounterPlusValue() {
-      this.$store.commit("zoomInCounter", 1);
-    },
-    sendCounterMinusValue() {
-      this.$store.commit("zoomOutCounter", 1);
-    },
     sendCounterColaPlus() {
       this.$store.commit("plusCounterCola", 1);
     },
@@ -429,6 +315,16 @@ export default {
     },
     sendCounterFriesMinus() {
       this.$store.commit("minusCounterFries", 1);
+    },
+    sendIdNewPizza() {
+      this.$store.commit("setIdNewPizza");
+    },
+    sendChangeDateNewPizza() {
+      this.$store.commit("setDatesNewPizza");
+    },
+    multiplyMethodsForNewpizza() {
+      this.sendIdNewPizza();
+      this.sendChangeDateNewPizza();
     },
   },
 };

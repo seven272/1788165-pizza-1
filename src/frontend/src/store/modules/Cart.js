@@ -1,20 +1,23 @@
+import jsonMisc from "@/static/misc.json";
 export default {
   state: {
-    countClick: 1,
+    misc: jsonMisc,
     isShowPizza: true,
     priceProducts: {
-      cola: 56,
+      cola: jsonMisc[0].price,
       colaClick: 0,
-      sauce: 30,
+      sauce: jsonMisc[1].price,
       sauceClick: 0,
-      fries: 56,
+      fries: jsonMisc[2].price,
       friesClick: 0,
     },
+    arrayPizzas: [],
+    // counterPizza: 1,
+    // price: 11,
+    // arrayPricesPizzas: [],
+    idPizza: 0,
   },
   getters: {
-    plusPizza(state, rootGetters) {
-      return rootGetters.calculatePricePizza * state.countClick;
-    },
     additionalProducts(state) {
       let finalPriceProducts =
         state.priceProducts.cola * state.priceProducts.colaClick +
@@ -22,30 +25,68 @@ export default {
         state.priceProducts.fries * state.priceProducts.friesClick;
       return finalPriceProducts;
     },
-    finalPriceWihtAllGoods(state, getters) {
-      return getters.additionalProducts + getters.plusPizza;
+    priceAllPizzas(state) {
+      let sum = 0;
+      state.arrayPizzas.forEach((elem) => {
+        sum += elem.pricePizza;
+      });
+      return sum;
     },
-    // typeDough(state, getters, rootState, rootGetters) {
-    //   let valueDough = rootGetters.addClassSauce;
-    //   // console.log(rootState.datesPizza);
-    //   console.log(rootGetters.addClassSauce);
-    //   console.log(rootState.finishPricePizza);
-    //   // if (rootGetters.addClassSauce.name === "Толстое") {
-    //   //   valueDough = "На толстом тесте";
-    //   // } else {
-    //   //   valueDough = "На тонком тесте";
-    //   // }
-    //   return valueDough;
-    // },
+    finalPriceWihtAllGoods(state, getters) {
+      return getters.additionalProducts + getters.priceAllPizzas;
+    },
+    // eslint-disable-next-line no-unused-vars
+    addNewPizza(state, getters, rootState, rootGetters) {
+      let objectPizza = {};
+      objectPizza.idPizza =
+        rootState.Builder.datesPizza.title
+          .toLowerCase()
+          .charCodeAt(0)
+          .toString() +
+        rootState.Builder.datesPizza.title
+          .toLowerCase()
+          .charCodeAt(1)
+          .toString();
+      // objectPizza.idPizza = Math.ceil(Math.random() * 998) + 1;
+      objectPizza.namePizza = rootState.Builder.datesPizza.title;
+      objectPizza.sizePizza = rootState.Builder.datesPizza.size;
+      if (rootState.Builder.datesPizza.dough === "Толстое") {
+        objectPizza.doughPizza = "на толстом тесте";
+      } else {
+        objectPizza.doughPizza = "на тонком тесте";
+      }
+      objectPizza.hiddenDoughPizza = rootState.Builder.datesPizza.dough;
+      objectPizza.saucePizza = rootState.Builder.datesPizza.sauce.toLowerCase();
+      //подставляю значения ингридиентов из геттера в модуле Builder
+      objectPizza.hiddenIngredientesPizza = rootGetters.getNewArrayIngredients;
+      // objectPizza.hiddenIngredientesPizza = rootState.Builder.ingredientId;
+      console.log(
+        "Данные из создаваемого обьектa:  " +
+          objectPizza.hiddenIngredientesPizza
+      );
+      objectPizza.hiddenPriceIngredientes = rootState.Builder.ingredientPrice;
+      objectPizza.hiddenPriceDeleteIngredientes =
+        rootState.Builder.ingredientPriceDelete;
+      objectPizza.ingredientPizza = rootGetters.getNewArrayIngredients
+        .join(", ")
+        .toLowerCase();
+      // objectPizza.сounterPizza = 1;
+      objectPizza.pricePizza = rootGetters.calculatePricePizza;
+      objectPizza.priceForCalculate = rootGetters.calculatePricePizza;
+
+      return objectPizza;
+    },
   },
   mutations: {
-    zoomInCounter(state, count) {
-      state.countClick += count;
-    },
-    zoomOutCounter(state, count) {
-      state.countClick -= count;
-      if (state.countClick === 0) {
-        state.isShowPizza = false;
+    pricesPizzas(state, date) {
+      console.log(date.keyId);
+      let counter = date.keyCounter;
+      let priceForCalc = date.keyPriceForCalc;
+      let result = counter * priceForCalc;
+      for (let i = 0; i < state.arrayPizzas.length; i++) {
+        if (state.arrayPizzas[i].idPizza === date.keyId) {
+          state.arrayPizzas[i].pricePizza = result;
+        }
       }
     },
     plusCounterCola(state, count) {
@@ -65,6 +106,24 @@ export default {
     },
     minusCounterFries(state, count) {
       state.priceProducts.friesClick -= count;
+      console.log(count);
+    },
+    setNewPizza(state) {
+      if (state.idPizza === 0) {
+        state.arrayPizzas.push(this.getters.addNewPizza);
+      } else {
+        for (let i = 0; i < state.arrayPizzas.length; i++) {
+          if (state.arrayPizzas[i].idPizza === state.idPizza) {
+            state.arrayPizzas[i] = this.getters.addNewPizza;
+          }
+        }
+      }
+    },
+    setIdPizza(state, date) {
+      state.idPizza = date.idPizza;
+    },
+    setIdNewPizza(state) {
+      state.idPizza = 0;
     },
   },
   actions: {},

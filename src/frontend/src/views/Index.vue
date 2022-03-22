@@ -97,13 +97,8 @@ export default {
       objectDoughWithClass: "addClassDough",
       objectSizeWithClass: "addClassSize",
       objectIngredientsWithClass: "addClassIngredient",
-      idIngredDelete: "getDeleteIdIngred",
-      priceIngredDelete: "getDeletePriceIngred",
-      arraySortIngredients: "getNewArrayIngredients",
     }),
     ...mapState({
-      pizza: (state) => state.Builder.pizza,
-      doughPiz: (state) => state.Builder.datesPizza,
       priceIngred: (state) => state.Builder.ingredientPrice,
       idIngred: (state) => state.Builder.ingredientId,
     }),

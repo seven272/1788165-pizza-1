@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "BuilderIngredientsSelector",
   props: {
@@ -70,23 +70,26 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      value: (state) => state.Builder.inputValue,
-      counter: (state) => state.Builder.counterIngredients,
-    }),
     ...mapGetters({
-      arrayIngredients: "getNewArrayIngredients",
+      // arrayIngredients: "getNewArrayIngredients",
     }),
-    // eslint-disable-next-line vue/return-in-computed-property
+    ...mapState({
+      arrayPizzas: (state) => state.Cart.arrayPizzas,
+      idPizza: (state) => state.Cart.idPizza,
+      arrayIngredients: (state) => state.Builder.ingredientId,
+    }),
+
     lengthIngredients() {
+      let length = 0;
       let ingredients = [];
       if (this.arrayIngredients.includes(this.ingredient_pizza.name)) {
         let ingred = this.ingredient_pizza.name;
         ingredients = this.arrayIngredients.filter(function (elem) {
           return elem === ingred;
         });
-        return ingredients.length;
       }
+      length = ingredients.length;
+      return length;
     },
     isDisabledButtonPlus() {
       let bulianValueBtnPlus = false;

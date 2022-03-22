@@ -14,47 +14,40 @@ export default {
       sauce: "Томатный",
       costSauce: 50,
       size: "23 см",
+      listIngredients: ["Лук", "Лук", "Лук"],
     },
     finishPricePizza: 0,
-    counterIngredients: 0,
-    inputValue: 10,
   },
   getters: {
     addClassSauce: (state) => {
+      let sauces = state.pizza.sauces;
       let arrSauces = [];
       let arrSauceValues = ["tomato", "creamy"];
-      for (let i = 0; i < state.pizza.sauces.length; i++) {
-        state.pizza.sauces[i]["value"] = arrSauceValues[i];
-        arrSauces.push(state.pizza.sauces[i]);
+      for (let i = 0; i < sauces.length; i++) {
+        sauces[i]["value"] = arrSauceValues[i];
+        arrSauces.push(sauces[i]);
       }
       return arrSauces;
     },
     addClassDough: (state) => {
+      let doughes = state.pizza.dough;
       let arrDoughes = [];
       let arrDoughValues = ["light", "large"];
-      for (let i = 0; i < state.pizza.dough.length; i++) {
-        state.pizza.dough[i]["value"] = arrDoughValues[i];
-        arrDoughes.push(state.pizza.dough[i]);
+      for (let i = 0; i < doughes.length; i++) {
+        doughes[i]["value"] = arrDoughValues[i];
+        arrDoughes.push(doughes[i]);
       }
       return arrDoughes;
     },
     addClassSize: (state) => {
+      let sizes = state.pizza.sizes;
       let arrSizes = [];
       let arrSizeValues = ["small", "normal", "big"];
-      for (let i = 0; i < state.pizza.sizes.length; i++) {
-        state.pizza.sizes[i]["value"] = arrSizeValues[i];
-        arrSizes.push(state.pizza.sizes[i]);
+      for (let i = 0; i < sizes.length; i++) {
+        sizes[i]["value"] = arrSizeValues[i];
+        arrSizes.push(sizes[i]);
       }
       return arrSizes;
-    },
-    typeDough: (state) => {
-      let value = "";
-      if (state.datesPizza.dough === "Толстое") {
-        value = "на толстом тесте";
-      } else {
-        value = "на тонком тесте";
-      }
-      return value;
     },
     addClassIngredient: (state) => {
       let arrIngredients = [];
@@ -81,14 +74,14 @@ export default {
       return arrIngredients;
     },
     getNewArrayIngredients: (state) => {
-      let sortArrIngedients = [];
+      // console.log("удаленные ингридиенты до " + state.ingredientIdDelete);
       let arr1 = state.ingredientId;
       let arr2 = state.ingredientIdDelete;
       let newArr = arr1.map((elem) => {
         for (let i = 0; i < arr2.length; i++) {
           if (elem === arr2[i]) {
             elem = "";
-            delete arr2[i];
+            arr2.pop(arr2[i]);
           }
         }
         return elem;
@@ -100,9 +93,13 @@ export default {
           }
         })
         .sort();
-      state.ingredientId = filterArr;
-      sortArrIngedients = state.ingredientId;
-      return sortArrIngedients;
+      //заменяем массив в стейте отсортированными ингридиентами
+      state.ingredientId.splice(0, state.ingredientId.length, ...filterArr);
+      // state.ingredientId = filterArr;
+      // console.log("Стейт " + state.ingredientId);
+      // console.log("внутри геттера " + filterArr);
+      // console.log("удаленные ингридиенты поссле  " + state.ingredientIdDelete);
+      return filterArr;
     },
     calculatePricePizza(state, getters) {
       let finalPrice =
@@ -173,6 +170,67 @@ export default {
     },
     setTitlePizza: (state, title) => {
       state.datesPizza.title = title;
+    },
+    setFinalPrice: (state) => {
+      state.finishPricePizza = this.calculatePricePizza;
+    },
+    setDatesForPizza: (
+      state,
+      {
+        idPizza,
+        namePizza,
+        sizePizza,
+        saucePizza,
+        hiddenDoughPizza,
+        // priceForCalculate,
+        hiddenPriceIngredientes,
+        hiddenPriceDeleteIngredientes,
+        hiddenIngredientesPizza,
+      }
+    ) => {
+      state.datesPizza.title = namePizza;
+      state.datesPizza.size = sizePizza;
+      state.datesPizza.sauce =
+        saucePizza.charAt(0).toUpperCase() + saucePizza.slice(1);
+      state.datesPizza.dough = hiddenDoughPizza;
+      //заменяю названия ингридиентов
+      state.ingredientId.splice(
+        0,
+        state.ingredientId.length,
+        ...hiddenIngredientesPizza
+      );
+      //заменяю массив с ценами ингридиентов
+      state.ingredientPrice.splice(
+        0,
+        state.ingredientPrice.length,
+        ...hiddenPriceIngredientes
+      );
+      //заменяю массив с ценами удаленных ингридиентов
+      state.ingredientPriceDelete.splice(
+        0,
+        state.ingredientPriceDelete.length,
+        ...hiddenPriceDeleteIngredientes
+      );
+      console.log(
+        "Данные из уже созданного обьекта, после нажатия на изменить: " +
+          hiddenIngredientesPizza
+      );
+      console.log("цены добавленных ингридиентов: " + hiddenPriceIngredientes);
+      console.log(
+        "цены удаленных ингридиентов: " + hiddenPriceDeleteIngredientes
+      );
+      console.log("ID this object " + idPizza);
+    },
+    setDatesNewPizza: (state) => {
+      state.ingredientId.length = 0;
+      state.ingredientPrice.length = 0;
+      state.ingredientPriceDelete.length = 0;
+      state.ingredientIdDelete.length = 0;
+      state.datesPizza.title = "";
+      state.datesPizza.size = "23 см";
+      state.datesPizza.sauce = "Томатный";
+      state.datesPizza.dough = "Толстое";
+      console.log(state.ingredientPrice);
     },
   },
   actions: {},

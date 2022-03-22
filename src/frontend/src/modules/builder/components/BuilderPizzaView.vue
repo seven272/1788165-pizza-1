@@ -26,14 +26,17 @@
     </div>
     <div class="content__result">
       <p>Итого: {{ pricePizza }} ₽</p>
-      <button
-        ref="buttonCook"
-        type="button"
-        class="button"
-        :disabled="isDisabledButtonCook"
-      >
-        Готовьте!
-      </button>
+      <router-link :to="'/cart'">
+        <button
+          ref="buttonCook"
+          type="button"
+          class="button"
+          :disabled="isDisabledButtonCook"
+          @click="sendNewPizza"
+        >
+          Готовьте!
+        </button>
+      </router-link>
     </div>
   </div>
 </template>
@@ -54,6 +57,7 @@ export default {
       nameDough: (state) => state.Builder.datesPizza.dough,
       nameSauce: (state) => state.Builder.datesPizza.sauce,
       namePizza: (state) => state.Builder.datesPizza.title,
+      // pricePizza: (state) => state.Builder.finishPricePizza,
     }),
     getTitle: {
       get() {
@@ -152,6 +156,11 @@ export default {
         bulianValueBtnCook = true;
       }
       return bulianValueBtnCook;
+    },
+  },
+  methods: {
+    sendNewPizza() {
+      this.$store.commit("setNewPizza");
     },
   },
 };
