@@ -5,7 +5,7 @@
       name="diameter"
       :value="`${sizePizza.value}`"
       class="visually-hidden"
-      @click="sendNameSize"
+      @click="changeSize"
     />
     <span>{{ sizePizza.name }}</span>
   </label>
@@ -21,8 +21,8 @@ export default {
     },
   },
   methods: {
-    sendNameSize() {
-      this.$emit("nameSizePizza", this.sizePizza);
+    changeSize() {
+      this.$store.commit("setSizePizza", this.sizePizza.name);
     },
   },
 };

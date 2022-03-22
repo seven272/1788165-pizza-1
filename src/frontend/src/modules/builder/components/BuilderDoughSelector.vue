@@ -6,7 +6,7 @@
       :value="`${doughPizza.value}`"
       class="visually-hidden"
       checked
-      @click="sendNameDough"
+      @click="changeDough"
     />
     <b>{{ doughPizza.name }}</b>
     <span>{{ doughPizza.description }}</span>
@@ -23,8 +23,8 @@ export default {
     },
   },
   methods: {
-    sendNameDough() {
-      this.$emit("nameDoughPizza", this.doughPizza);
+    changeDough() {
+      this.$store.commit("setDoughPizza", this.doughPizza.name);
     },
   },
 };

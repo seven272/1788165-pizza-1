@@ -7,7 +7,7 @@
         type="text"
         name="pizza_name"
         placeholder="Введите название пиццы"
-        v-model="titlePizza"
+        v-model="getTitle"
       />
     </label>
 
@@ -25,42 +25,48 @@
       </div>
     </div>
     <div class="content__result">
-      <p>Итого: {{ finalPricePizza }} ₽</p>
-      <button
-        ref="buttonCook"
-        type="button"
-        class="button"
-        :disabled="isDisabledButtonCook"
-      >
-        Готовьте!
-      </button>
+      <p>Итого: {{ pricePizza }} ₽</p>
+      <router-link :to="'/cart'">
+        <button
+          ref="buttonCook"
+          type="button"
+          class="button"
+          :disabled="isDisabledButtonCook"
+          @click="sendNewPizza"
+        >
+          Готовьте!
+        </button>
+      </router-link>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "BuilderPizzaView",
-  props: {
-    facePizza: {
-      type: Object,
-      default: () => {},
-    },
-    pricePizza: {
-      type: Object,
-      default: () => {},
-    },
-    finalPricePizza: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-  },
-  data: () => ({
-    titlePizza: "",
-  }),
+  props: {},
+  data: () => ({}),
   components: {},
   computed: {
+    ...mapGetters({
+      pricePizza: "calculatePricePizza",
+      arraySortIngredients: "getNewArrayIngredients",
+    }),
+    ...mapState({
+      nameDough: (state) => state.Builder.datesPizza.dough,
+      nameSauce: (state) => state.Builder.datesPizza.sauce,
+      namePizza: (state) => state.Builder.datesPizza.title,
+      // pricePizza: (state) => state.Builder.finishPricePizza,
+    }),
+    getTitle: {
+      get() {
+        return this.namePizza;
+      },
+      set(value) {
+        this.$store.commit("setTitlePizza", value);
+      },
+    },
     getClassIngredients() {
       const dictionaryIngredients = {
         Грибы: "pizza__filling--mushrooms",
@@ -79,7 +85,7 @@ export default {
         Лосось: "pizza__filling--salmon",
         Томаты: "pizza__filling--tomatoes",
       };
-      let mapArr = this.facePizza.sortArrIngedients.map((elem) => {
+      let mapArr = this.arraySortIngredients.map((elem) => {
         if (elem === "Грибы") {
           return dictionaryIngredients.Грибы;
         } else if (elem === "Ананас") {
@@ -126,30 +132,35 @@ export default {
     },
     getClassDough() {
       let classDough = "";
-      if (this.facePizza.dough === "Толстое") {
+      if (this.nameDough === "Толстое") {
         classDough = "big";
-      } else if (this.facePizza.dough === "Тонкое") {
+      } else if (this.nameDough === "Тонкое") {
         classDough = "small";
       }
       return classDough;
     },
     getClassSauce() {
       let classSauce = "";
-      if (this.facePizza.sauce === "Томатный") {
+      if (this.nameSauce === "Томатный") {
         classSauce = "tomato";
-      } else if (this.facePizza.sauce === "Сливочный") {
+      } else if (this.nameSauce === "Сливочный") {
         classSauce = "creamy";
       }
       return classSauce;
     },
     isDisabledButtonCook() {
       let bulianValueBtnCook = true;
-      if (this.getClassIngredients.length > 0 && this.titlePizza !== "") {
+      if (this.getClassIngredients.length > 0 && this.namePizza !== "") {
         bulianValueBtnCook = false;
       } else {
         bulianValueBtnCook = true;
       }
       return bulianValueBtnCook;
+    },
+  },
+  methods: {
+    sendNewPizza() {
+      this.$store.commit("setNewPizza");
     },
   },
 };
